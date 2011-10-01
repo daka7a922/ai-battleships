@@ -1,8 +1,17 @@
 package controller;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.swing.JOptionPane;
+
+import ai.IPlayer;
+import ai.RandomPlayer;
 
 import view.Playground;
 
@@ -24,7 +33,53 @@ public class GameHandler {
 		this.playground = playground;
 		this.field = new Field();
 		this.field.addObserver(playground);
+		this.addActionListener();
 		this.placeShips();
+	}
+	
+	private void addActionListener() {
+		this.addFieldButtonListener();
+		this.addPlaceShipsButtonListener();
+		this.addStartButtonListener();
+	}
+	
+	private void addFieldButtonListener() {
+		for(int x = 0; x < 10; x++) {
+			for(int y = 0; y < 10; y++) {
+				final int a = x;
+				final int b = y;
+				this.playground.addFieldButtonListener(x, y, new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						JOptionPane.showMessageDialog(null,"Clicked on: " + a + ", " + b,"Titel", JOptionPane.PLAIN_MESSAGE);
+					}
+					
+				});
+			}
+		}
+	}
+	
+	private void addPlaceShipsButtonListener() {
+		this.playground.addPlaceShipsButtonListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ships = new ArrayList<Ship>();
+				field.reset();
+				placeShips();
+			}
+		});
+	}
+	
+	private void addStartButtonListener() {
+		this.playground.addStartButtonListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				startGame();
+			}
+		});
 	}
 	
 	private void placeShips() {
@@ -121,17 +176,13 @@ public class GameHandler {
 	
 	private boolean shipPlaced(int x, int y) {
 		if(x < 0 || x > 9 || y < 0 || y > 9) return false;
-		System.out.print("Check" + x + "" + y + ": ");
 		for(Ship s : this.ships) {
 			for(Coordinate c : s.getShip().keySet()) {
-				System.out.print(c.getxPosition() + "" + c.getyPosition() + " ");
 				if(c.getxPosition() == x && c.getyPosition() == y) {
-					System.out.println("conflict!");
 					return true;
 				}
 			}
 		}
-		System.out.println(" clear");
 		return false;
 	}
 	
@@ -157,5 +208,34 @@ public class GameHandler {
 			this.field.setField(x + (i * xSign), y + (i*ySign), 1);
 		}
 		this.ships.add(new Ship(list));
+	}
+	
+	private void startGame() {
+		IPlayer player = new RandomPlayer();
+		boolean finished = false;
+		while(!finished) {
+			this.attack(player.nextMove());
+			for(Ship s : ships) {
+				if(!s.sunk()) {
+					break;
+				}
+				finished = true;
+			}
+		}
+	}
+	
+	private void attack(Coordinate c) {
+		for(Ship s : this.ships) {
+			if(s.hit(c)) {
+				this.field.setField(c.getxPosition(), c.getyPosition(), 3);
+				if(s.sunk()) {
+					for(Coordinate cc : s.getShip().keySet()) {
+						this.field.setField(cc.getxPosition(), cc.getyPosition(), 4);
+					}
+				}
+			} else {
+				this.field.setField(c.getxPosition(), c.getyPosition(), 2);
+			}
+		}
 	}
 }

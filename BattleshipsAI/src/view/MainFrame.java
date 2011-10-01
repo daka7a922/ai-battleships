@@ -22,8 +22,6 @@ public class MainFrame extends JFrame {
 	private Playground playground;
 	private SettingsView options;
 	private Statistics statistics;
-	private Container playgroundContainer;
-	private Container playgroundContainerContainer;
 	
 	public MainFrame(Playground playground, SettingsView options, Statistics statistics) {
 		super();
@@ -31,8 +29,6 @@ public class MainFrame extends JFrame {
 		this.playground = playground;
 		this.options = options;
 		this.statistics = statistics;
-		this.playgroundContainer = new Container();
-		this.playgroundContainerContainer = new Container();
 		this.initialize();
 	}
 	
@@ -41,12 +37,9 @@ public class MainFrame extends JFrame {
 		ImageIcon settings = new ImageIcon(System.getProperty( "user.dir" ) + "/res/settings.png");
 		ImageIcon statistics = new ImageIcon(System.getProperty( "user.dir" ) + "/res/statistics.png");
 		this.setSize(800, 600);
-		this.playgroundContainer.setLayout(new BoxLayout(this.playgroundContainer, BoxLayout.PAGE_AXIS));
-		this.playgroundContainer.add(this.playground);
-		this.playgroundContainerContainer.setLayout(new BorderLayout());
-		this.playgroundContainerContainer.add(this.playgroundContainer, BorderLayout.CENTER);
+		this.setTitle("Battleships AI Project");
 		this.mainPanel.addTab("Settings", settings, this.options, "Select the wished mode");
-		this.mainPanel.addTab("Play", play, this.playgroundContainerContainer, "Play battleships");
+		this.mainPanel.addTab("Play", play, this.playground, "Play the game");
 		this.mainPanel.addTab("Statistics", statistics, this.statistics, "Provides statistics about performance");
 		this.add(mainPanel);
 	}

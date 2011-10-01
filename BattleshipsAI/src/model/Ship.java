@@ -27,4 +27,12 @@ public class Ship {
 		}
 		return false;
 	}
+	
+	public boolean sunk() {
+		if(this.ship.values().contains(false)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 }
