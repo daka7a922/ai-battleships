@@ -8,11 +8,7 @@ public class Field extends Observable {
 	
 	public Field() {
 		this.fields = new int[10][10];
-		for(int i = 0; i < 10; i++) {
-			for(int j = 0; j < 10; j++) {
-				fields[i][j] = 0;
-			}
-		}
+		this.reset();
 	}
 	
 	public int[][] getFields() {
@@ -25,5 +21,12 @@ public class Field extends Observable {
 		this.notifyObservers();
 		this.clearChanged();
 	}
-
+	
+	public void reset() {
+		for(int i = 0; i < 10; i++) {
+			for(int j = 0; j < 10; j++) {
+				this.setField(i, j, 0);
+			}
+		}
+	}
 }
