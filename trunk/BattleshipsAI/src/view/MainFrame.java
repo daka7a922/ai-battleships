@@ -18,43 +18,29 @@ import javax.swing.JTabbedPane;
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 	
-	private JTabbedPane mainPanel = new JTabbedPane();
-	private JPanel playground = new JPanel();
-	private Container playgroundContainer = new Container();
-	private Container playgroundContainerContainer = new Container();
-	private JPanel options = new JPanel();
-	private JPanel statistics = new JPanel();
+	private JTabbedPane mainPanel;
+	private Playground playground;
+	private SettingsView options;
+	private Statistics statistics;
+	private Container playgroundContainer;
+	private Container playgroundContainerContainer;
 	
-	public MainFrame() {
+	public MainFrame(Playground playground, SettingsView options, Statistics statistics) {
 		super();
+		this.mainPanel = new JTabbedPane();
+		this.playground = playground;
+		this.options = options;
+		this.statistics = statistics;
+		this.playgroundContainer = new Container();
+		this.playgroundContainerContainer = new Container();
 		this.initialize();
 	}
 	
 	private void initialize() {
-		this.setSize(800, 600);
 		ImageIcon play = new ImageIcon(System.getProperty( "user.dir" ) + "/res/play.png");
 		ImageIcon settings = new ImageIcon(System.getProperty( "user.dir" ) + "/res/settings.png");
 		ImageIcon statistics = new ImageIcon(System.getProperty( "user.dir" ) + "/res/statistics.png");
-		ImageIcon water = new ImageIcon(System.getProperty( "user.dir" ) + "/res/blueWater.png");
-		GridLayout grid = new GridLayout(10, 10);
-		this.playground.setLayout(grid);
-		this.playground.setMaximumSize(new Dimension(400, 400));
-		for(int i = 0; i < 10; i++) {
-			for(int j = 0; j < 10; j++) {
-				JButton button = new JButton();
-				final int a = i;
-				final int b = j;
-				button.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent arg0) {
-						JOptionPane.showMessageDialog(null,"" + a + ", " + b,"Titel", JOptionPane.PLAIN_MESSAGE);
-					}	
-				});
-				button.setIcon(water);
-				this.playground.add(button);
-			}
-		}
+		this.setSize(800, 600);
 		this.playgroundContainer.setLayout(new BoxLayout(this.playgroundContainer, BoxLayout.PAGE_AXIS));
 		this.playgroundContainer.add(this.playground);
 		this.playgroundContainerContainer.setLayout(new BorderLayout());

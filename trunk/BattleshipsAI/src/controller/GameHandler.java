@@ -2,33 +2,42 @@ package controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+
+import view.Playground;
 
 import model.Coordinate;
+import model.Field;
+import model.Settings;
 import model.Ship;
 
 public class GameHandler {
 	
+	private Field field;
 	private List<Ship> ships;
-	private int five = 3;
-	private int four = 2;
-	private int three = 2;
-	private int two = 2;
+	private Settings settings;
+	private Playground playground;
 	
-	public GameHandler() {
+	public GameHandler(Settings settings, Playground playground) {
 		this.ships = new ArrayList<Ship>();
+		this.settings = settings;
+		this.playground = playground;
+		this.field = new Field();
+		this.field.addObserver(playground);
 		this.placeShips();
 	}
 	
 	private void placeShips() {
-		for(int i = 0; i < this.five; i++) {
+		for(int a : settings.getShipNumbers().keySet())
+		for(int i = 0; i < this.settings.getShipNumbers().get(a); i++) {
 			boolean foundShip = false;
 			while(!foundShip) {
 			int x = (int)(Math.random() * 10);
 			int y = (int)(Math.random() * 10);
 			int direction = (int)(Math.random() * 4);
-			if(this.checkSpace(x, y, direction, 5)) {
-				if(this.checkCollisions(x, y, direction, 5)) {
-					this.createShip(x, y, direction, 5);
+			if(this.checkSpace(x, y, direction, a)) {
+				if(this.checkCollisions(x, y, direction, a)) {
+					this.createShip(x, y, direction, a);
 					foundShip = true;
 				}
 			}
@@ -63,7 +72,7 @@ public class GameHandler {
 				return false;
 			}
 			for(int i = 0; i < length; i++) {
-				if(this.shipPlaced(x + i, y + 1) || this.shipPlaced(x + i, y - 1)) {
+				if(this.shipPlaced(x + i, y + 1) || this.shipPlaced(x + i, y - 1) || this.shipPlaced(x + i, y)) {
 					return false;
 				}
 			}
@@ -75,7 +84,7 @@ public class GameHandler {
 				return false;
 			}
 			for(int i = 0; i < length; i++) {
-				if(this.shipPlaced(x - i, y + 1) || this.shipPlaced(x - i, y - 1)) {
+				if(this.shipPlaced(x - i, y + 1) || this.shipPlaced(x - i, y - 1) || this.shipPlaced(x - i, y)) {
 					return false;
 				}
 			}
@@ -87,7 +96,7 @@ public class GameHandler {
 				return false;
 			}
 			for(int i = 0; i < length; i++) {
-				if(this.shipPlaced(x + 1, y + i) || this.shipPlaced(x - 1, y + i)) {
+				if(this.shipPlaced(x + 1, y + i) || this.shipPlaced(x - 1, y + i) || this.shipPlaced(x, y + i)) {
 					return false;
 				}
 			}
@@ -99,7 +108,7 @@ public class GameHandler {
 				return false;
 			}
 			for(int i = 0; i < length; i++) {
-				if(this.shipPlaced(x + 1, y - i) || this.shipPlaced(x - 1, y - i)) {
+				if(this.shipPlaced(x + 1, y - i) || this.shipPlaced(x - 1, y - i) || this.shipPlaced(x, y -i)) {
 					return false;
 				}
 			}
@@ -112,13 +121,17 @@ public class GameHandler {
 	
 	private boolean shipPlaced(int x, int y) {
 		if(x < 0 || x > 9 || y < 0 || y > 9) return false;
+		System.out.print("Check" + x + "" + y + ": ");
 		for(Ship s : this.ships) {
 			for(Coordinate c : s.getShip().keySet()) {
+				System.out.print(c.getxPosition() + "" + c.getyPosition() + " ");
 				if(c.getxPosition() == x && c.getyPosition() == y) {
+					System.out.println("conflict!");
 					return true;
 				}
 			}
 		}
+		System.out.println(" clear");
 		return false;
 	}
 	
@@ -141,9 +154,8 @@ public class GameHandler {
 		List<Coordinate> list = new ArrayList<Coordinate>();
 		for(int i = 0; i < length; i++) {
 			list.add(new Coordinate(x + (i * xSign), y + (i * ySign)));
-			System.out.println((x + (i * xSign)) + ", " + (y + (i*ySign)));
+			this.field.setField(x + (i * xSign), y + (i*ySign), 1);
 		}
-		System.out.println();
 		this.ships.add(new Ship(list));
 	}
 }
