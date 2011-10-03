@@ -26,6 +26,7 @@ public class GameHandler {
 	private List<Ship> ships;
 	private Settings settings;
 	private Playground playground;
+	private IPlayer player;
 	
 	public GameHandler(Settings settings, Playground playground) {
 		this.ships = new ArrayList<Ship>();
@@ -211,31 +212,35 @@ public class GameHandler {
 	}
 	
 	private void startGame() {
-		IPlayer player = new RandomPlayer();
-		boolean finished = false;
-		while(!finished) {
+		this.player = new RandomPlayer();
+		boolean allSunk = false;
+		while(!allSunk) {
 			this.attack(player.nextMove());
+			boolean foundNoShip = true;
 			for(Ship s : ships) {
 				if(!s.sunk()) {
-					break;
+					foundNoShip = false;
 				}
-				finished = true;
 			}
+			allSunk = foundNoShip;
 		}
 	}
 	
 	private void attack(Coordinate c) {
+		boolean hit = false;
 		for(Ship s : this.ships) {
 			if(s.hit(c)) {
+				hit = true;
 				this.field.setField(c.getxPosition(), c.getyPosition(), 3);
 				if(s.sunk()) {
 					for(Coordinate cc : s.getShip().keySet()) {
 						this.field.setField(cc.getxPosition(), cc.getyPosition(), 4);
 					}
 				}
-			} else {
-				this.field.setField(c.getxPosition(), c.getyPosition(), 2);
 			}
+		}
+		if(!hit) {
+			this.field.setField(c.getxPosition(), c.getyPosition(), 2);
 		}
 	}
 }
