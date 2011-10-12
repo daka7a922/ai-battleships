@@ -5,6 +5,9 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -33,9 +36,16 @@ public class MainFrame extends JFrame {
 	}
 	
 	private void initialize() {
-		ImageIcon play = new ImageIcon(System.getProperty( "user.dir" ) + "/res/play.png");
-		ImageIcon settings = new ImageIcon(System.getProperty( "user.dir" ) + "/res/settings.png");
-		ImageIcon statistics = new ImageIcon(System.getProperty( "user.dir" ) + "/res/statistics.png");
+		WindowListener listener = new WindowAdapter() {
+			public void windowClosing(WindowEvent we) {
+				//Message after window was close
+				System.exit(0);
+			}
+		};
+		addWindowListener(listener);
+		ImageIcon play = new ImageIcon(getClass().getResource("/view/img/play.png"));
+		ImageIcon settings = new ImageIcon(getClass().getResource("/view/img/settings.png"));
+		ImageIcon statistics = new ImageIcon(getClass().getResource("/view/img/statistics.png"));
 		this.setSize(800, 600);
 		this.setTitle("Battleships AI Project");
 		this.mainPanel.addTab("Settings", settings, this.options, "Select the wished mode");

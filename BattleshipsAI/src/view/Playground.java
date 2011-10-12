@@ -26,11 +26,11 @@ public class Playground extends JPanel implements Observer {
 	private JPanel field;
 	private JPanel buttons;
 	private Container fieldContainer;
-	private ImageIcon blueWater = new ImageIcon(System.getProperty( "user.dir" ) + "/res/blueWater.png");
-	private ImageIcon greenWater = new ImageIcon(System.getProperty( "user.dir" ) + "/res/greenWater.png");
-	private ImageIcon redWater = new ImageIcon(System.getProperty( "user.dir" ) + "/res/redWater.png");
-	private ImageIcon orangeWater = new ImageIcon(System.getProperty( "user.dir" ) + "/res/orangeWater.png");
-	private ImageIcon greyWater = new ImageIcon(System.getProperty( "user.dir" ) + "/res/greyWater.png");
+	private ImageIcon blueWater;
+	private ImageIcon greenWater;
+	private ImageIcon redWater;
+	private ImageIcon orangeWater;
+	private ImageIcon greyWater;
 	
 	public Playground() {
 		super();
@@ -42,12 +42,16 @@ public class Playground extends JPanel implements Observer {
 	}
 
 	private void initialize() {
+		this.blueWater = new ImageIcon(getClass().getResource("/view/img/blueWater.png"));
+		this.greenWater = new ImageIcon(getClass().getResource("/view/img/greenWater.png"));
+		this.redWater = new ImageIcon(getClass().getResource("/view/img/redWater.png"));
+		this.orangeWater = new ImageIcon(getClass().getResource("/view/img/orangeWater.png"));
+		this.greyWater = new ImageIcon(getClass().getResource("/view/img/greyWater.png"));
 		this.setMaximumSize(new Dimension(400, 400));
 		this.fieldContainer.setLayout(new BorderLayout());
 		GridLayout g = new GridLayout(1, 2);
 		this.setLayout(new FlowLayout());
 		this.buttons.setLayout(new GridLayout(3, 1));
-		ImageIcon water = new ImageIcon(System.getProperty( "user.dir" ) + "/res/blueWater.png");
 		GridLayout grid = new GridLayout(10, 10);
 		this.field.setLayout(grid);
 		
@@ -58,7 +62,7 @@ public class Playground extends JPanel implements Observer {
 						return new Dimension(40, 40);
 					}
 				};
-				button.setIcon(water);
+				button.setIcon(blueWater);
 				this.fieldButtons[i][j] = button;
 				this.field.add(button);
 			}
