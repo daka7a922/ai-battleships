@@ -3,14 +3,17 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
+import java.util.Observer;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.JOptionPane;
 
 import ai.IPlayer;
+import ai.MediumPlayer;
 import ai.RandomPlayer;
 
 import view.Playground;
@@ -20,28 +23,30 @@ import model.Field;
 import model.Settings;
 import model.Ship;
 
-public class GameHandler {
+public class GameHandler extends Observable implements Observer {
 	
 	private Field field;
 	private List<Ship> ships;
-	private Settings settings;
+	private SettingsHandler settingsHandler;
 	private Playground playground;
 	private IPlayer player;
+	private Thread t;
 	
-	public GameHandler(Settings settings, Playground playground) {
+	public GameHandler(Playground playground, SettingsHandler settingsHandler) {
 		this.ships = new ArrayList<Ship>();
-		this.settings = settings;
+		this.settingsHandler = settingsHandler;
 		this.playground = playground;
 		this.field = new Field();
 		this.field.addObserver(playground);
+		this.settingsHandler.addObserver(this);
 		this.addActionListener();
-		this.placeShips();
 	}
 	
 	private void addActionListener() {
 		this.addFieldButtonListener();
 		this.addPlaceShipsButtonListener();
-		this.addStartButtonListener();
+		this.addNextMoveButtonListener();
+		this.addRunThroughButtonListener();
 	}
 	
 	private void addFieldButtonListener() {
@@ -66,28 +71,48 @@ public class GameHandler {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ships = new ArrayList<Ship>();
-				field.reset();
+				playground.setNextMoveButtonEnabled(true);
+				playground.setRunThroughButtonEnabled(true);
 				placeShips();
-			}
-		});
-	}
-	
-	private void addStartButtonListener() {
-		this.playground.addStartButtonListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
 				startGame();
 			}
 		});
 	}
 	
+	private void addNextMoveButtonListener() {
+		this.playground.addNextMoveButtonListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(nextMove()) {
+					playground.setNextMoveButtonEnabled(false);
+					playground.setRunThroughButtonEnabled(false);
+				}
+			}
+		});
+	}
+	
+	private void addRunThroughButtonListener() {
+		this.playground.addRunThroughButtonListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				playground.setNextMoveButtonEnabled(false);
+				playground.setRunThroughButtonEnabled(false);
+				runThrough();
+			}
+		});
+	}
+	
 	private void placeShips() {
-		for(int a : settings.getShipNumbers().keySet())
-		for(int i = 0; i < this.settings.getShipNumbers().get(a); i++) {
+		int threshold = 1000;
+		ships = new ArrayList<Ship>();
+		field.reset();
+		for(int a : settingsHandler.getSettings().getShipNumbers().keySet())
+		for(int i = 0; i < this.settingsHandler.getSettings().getShipNumbers().get(a); i++) {
 			boolean foundShip = false;
-			while(!foundShip) {
+			while(!foundShip && threshold > 0) {
+				threshold--;
 			int x = (int)(Math.random() * 10);
 			int y = (int)(Math.random() * 10);
 			int direction = (int)(Math.random() * 4);
@@ -98,6 +123,9 @@ public class GameHandler {
 				}
 			}
 			}
+		}
+		if(threshold == 0) {
+			this.placeShips();
 		}
 	}
 	
@@ -212,27 +240,44 @@ public class GameHandler {
 	}
 	
 	private void startGame() {
-		this.player = new RandomPlayer();
-		boolean allSunk = false;
-		while(!allSunk) {
-			this.attack(player.nextMove());
-			boolean foundNoShip = true;
-			for(Ship s : ships) {
-				if(!s.sunk()) {
-					foundNoShip = false;
-				}
-			}
-			allSunk = foundNoShip;
+		if(this.settingsHandler.getSettings().getPlayer() == 0) {
+			this.player = new RandomPlayer(this.settingsHandler.getSettings().getShipNumbers());
+			this.addObserverToGameHandler(this.player);
+		} else if(this.settingsHandler.getSettings().getPlayer() == 1) {
+			this.player = new MediumPlayer(this.settingsHandler.getSettings().getShipNumbers());
+			this.addObserverToGameHandler(this.player);
+		} else if(this.settingsHandler.getSettings().getPlayer() == 2) {
+			//TODO
 		}
+	}
+	
+	public void runThrough() {
+		while(!this.nextMove()) {
+			//run
+		}
+	}
+	
+	public boolean nextMove() {
+		this.attack(player.nextMove());
+		for(Ship s : this.ships) {
+			if(!s.sunk()) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	private void attack(Coordinate c) {
 		boolean hit = false;
+		boolean sunk = false;
+		int shipLength = 0;
 		for(Ship s : this.ships) {
 			if(s.hit(c)) {
 				hit = true;
 				this.field.setField(c.getxPosition(), c.getyPosition(), 3);
 				if(s.sunk()) {
+					sunk = true;
+					shipLength = s.getShip().size();
 					for(Coordinate cc : s.getShip().keySet()) {
 						this.field.setField(cc.getxPosition(), cc.getyPosition(), 4);
 					}
@@ -241,6 +286,34 @@ public class GameHandler {
 		}
 		if(!hit) {
 			this.field.setField(c.getxPosition(), c.getyPosition(), 2);
+		}
+		this.setChanged();
+		this.notifyObservers(new AttackResult(hit, sunk, shipLength));
+		this.clearChanged();
+	}
+	
+	private void addObserverToGameHandler(Observer o) {
+		this.deleteObservers();
+		this.addObserver(o);
+	}
+
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		HashMap<Integer, Integer> map = this.settingsHandler.getSettings().getShipNumbers();
+		int sum = 0;
+		for(int x : map.keySet()) {
+			sum = sum + map.get(x);
+		}
+		if(sum > 1) {
+			this.playground.setPlaceShipsButtonEnabled(true);
+			this.playground.setNextMoveButtonEnabled(true);
+			this.playground.setRunThroughButtonEnabled(true);
+			this.placeShips();
+			this.startGame();
+		} else {
+			this.playground.setPlaceShipsButtonEnabled(false);
+			this.playground.setNextMoveButtonEnabled(false);
+			this.playground.setRunThroughButtonEnabled(false);
 		}
 	}
 }

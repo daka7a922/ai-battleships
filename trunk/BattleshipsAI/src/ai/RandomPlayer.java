@@ -1,5 +1,6 @@
 package ai;
 
+import java.util.HashMap;
 import java.util.Observable;
 
 import controller.AttackResult;
@@ -8,8 +9,8 @@ import model.Coordinate;
 
 public class RandomPlayer extends AbstractPlayer {
 	
-	public RandomPlayer() {
-		super();
+	public RandomPlayer(HashMap<Integer, Integer> shipNumbers) {
+		super(shipNumbers);
 	}
 	
 	@Override
@@ -25,7 +26,23 @@ public class RandomPlayer extends AbstractPlayer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		//do nothing
+		AttackResult a = (AttackResult)arg;
+		if(a.isHit()) {
+			if(!a.isSunk()) {
+				System.out.println("Treffer");
+			} else {
+				int i = this.shipNumbers.get(a.getShipLength());
+				this.shipNumbers.put(a.getShipLength(), i-1);
+				System.out.println("Treffer versenkt (" + a.getShipLength() + ")");
+				System.out.print("Verbleibende Schiffe: ");
+				for(int x : this.shipNumbers.keySet()) {
+					System.out.print(x + "(" + this.shipNumbers.get(x) + ") ");
+				}
+				System.out.println();
+			}
+		} else {
+			System.out.println("Daneben");
+		}
 	}
 	
 
