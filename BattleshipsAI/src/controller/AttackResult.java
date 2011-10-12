@@ -4,10 +4,12 @@ public class AttackResult {
 	
 	private boolean hit;
 	private boolean sunk;
+	private int shipLength;
 	
-	public AttackResult(boolean hit, boolean sunk) {
+	public AttackResult(boolean hit, boolean sunk, int shipLength) {
 		this.hit = hit;
 		this.sunk = sunk;
+		this.shipLength = shipLength;
 	}
 
 	/**
@@ -22,5 +24,9 @@ public class AttackResult {
 	 */
 	public boolean isSunk() {
 		return sunk;
+	}
+	
+	public int getShipLength() {
+		return this.shipLength;
 	}
 }

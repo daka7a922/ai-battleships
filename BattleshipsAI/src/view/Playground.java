@@ -21,7 +21,8 @@ public class Playground extends JPanel implements Observer {
 	
 	private JButton[][] fieldButtons;
 	private JButton placeShips;
-	private JButton start;
+	private JButton nextMove;
+	private JButton runThrough;
 	private JPanel field;
 	private JPanel buttons;
 	private Container fieldContainer;
@@ -45,7 +46,7 @@ public class Playground extends JPanel implements Observer {
 		this.fieldContainer.setLayout(new BorderLayout());
 		GridLayout g = new GridLayout(1, 2);
 		this.setLayout(new FlowLayout());
-		this.buttons.setLayout(new GridLayout(2, 1));
+		this.buttons.setLayout(new GridLayout(3, 1));
 		ImageIcon water = new ImageIcon(System.getProperty( "user.dir" ) + "/res/blueWater.png");
 		GridLayout grid = new GridLayout(10, 10);
 		this.field.setLayout(grid);
@@ -63,9 +64,14 @@ public class Playground extends JPanel implements Observer {
 			}
 		}
 		this.placeShips = new JButton("Place ships");
-		this.start = new JButton("Start game");
+		this.nextMove = new JButton("Next Move");
+		this.runThrough = new JButton("Run through");
+		this.placeShips.setEnabled(false);
+		this.nextMove.setEnabled(false);
+		this.runThrough.setEnabled(false);
 		this.buttons.add(this.placeShips);
-		this.buttons.add(this.start);
+		this.buttons.add(this.nextMove);
+		this.buttons.add(this.runThrough);
 		this.add(field);
 		this.add(buttons);
 	}
@@ -98,7 +104,23 @@ public class Playground extends JPanel implements Observer {
 		this.placeShips.addActionListener(l);
 	}
 	
-	public void addStartButtonListener(ActionListener l) {
-		this.start.addActionListener(l);
+	public void addNextMoveButtonListener(ActionListener l) {
+		this.nextMove.addActionListener(l);
+	}
+	
+	public void addRunThroughButtonListener(ActionListener l) {
+		this.runThrough.addActionListener(l);
+	}
+	
+	public void setPlaceShipsButtonEnabled(boolean enabled) {
+		this.placeShips.setEnabled(enabled);
+	}
+	
+	public void setNextMoveButtonEnabled(boolean enabled) {
+		this.nextMove.setEnabled(enabled);
+	}
+	
+	public void setRunThroughButtonEnabled(boolean enabled) {
+		this.runThrough.setEnabled(enabled);
 	}
 }
