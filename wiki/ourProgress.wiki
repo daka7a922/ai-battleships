@@ -1,0 +1,7 @@
+= 12.10.2011 =
+
+The last two weeks we spended for a clean setup of a test environment. This is now running stable so far. It includes the following parts: a settings section where the user can specify the options (number of ships and type of player). A game section where the game can be started and the progress of the player is visualized. And a statistics section that isn't implemented yet but hopefully will be in 1 - 2 days.
+
+There are two different types of players - a random player (that doesn't perform very well and often needs 100 tries to hit all ships on the 10 x 10 field ;) ) and a Medium-skilled player that is based on a quite simple structure but doesn't perform too bad.
+
+Now, our target is to create a third type of player (that easily can be plugged in into the existing system) that is based on AI techniques such as Logic and decision making under uncertainty. We scheduled a meeting for tomorrow (13.10.) so that we can discuss out future work and start to elaborate the AI approach.
