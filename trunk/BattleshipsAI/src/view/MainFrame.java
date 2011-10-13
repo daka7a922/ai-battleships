@@ -1,31 +1,35 @@
 package view;
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 	
+	/** the tabbed panel for the different sections. */
 	private JTabbedPane mainPanel;
+	
+	/** the playground view. */
 	private Playground playground;
+	
+	/** the settings view. */
 	private SettingsView options;
+	
+	/** the statistics view. */
 	private Statistics statistics;
 	
+	/**
+	 * constructor.
+	 * 
+	 * @param playground playground view.
+	 * @param options settings view.
+	 * @param statistics statistics view.
+	 */
 	public MainFrame(Playground playground, SettingsView options, Statistics statistics) {
 		super();
 		this.mainPanel = new JTabbedPane();
@@ -35,6 +39,9 @@ public class MainFrame extends JFrame {
 		this.initialize();
 	}
 	
+	/**
+	 * adds panels to the tabbed pane, sets size, title, icons, etc.
+	 */
 	private void initialize() {
 		WindowListener listener = new WindowAdapter() {
 			public void windowClosing(WindowEvent we) {

@@ -5,33 +5,64 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import model.Field;
 
+/**
+ * the panel that contains the game view.
+ * 
+ * @author Jakob
+ *
+ */
+@SuppressWarnings("serial")
 public class Playground extends JPanel implements Observer {
 	
+	/** the buttons that represent the field. */
 	private JButton[][] fieldButtons;
+	
+	/** the place ships button. */
 	private JButton placeShips;
+	
+	/** the next move button. */
 	private JButton nextMove;
+	
+	/** the run through button. */
 	private JButton runThrough;
+	
+	/** the panel that contains the field. */
 	private JPanel field;
+	
+	/** the panel that contains the buttons. */
 	private JPanel buttons;
+	
+	/** the container for the field. */
 	private Container fieldContainer;
+	
+	/** the icon for blue water. */
 	private ImageIcon blueWater;
+	
+	/** the icon for green water. */
 	private ImageIcon greenWater;
+	
+	/**the icon for red water. */
 	private ImageIcon redWater;
+	
+	/** the icon for orange water. */
 	private ImageIcon orangeWater;
+	
+	/** the icon for grey water. */
 	private ImageIcon greyWater;
 	
+	/**
+	 * constructor.
+	 */
 	public Playground() {
 		super();
 		this.fieldButtons = new JButton[10][10];
@@ -41,6 +72,7 @@ public class Playground extends JPanel implements Observer {
 		this.initialize();
 	}
 
+	/** placing buttons, components, icons, etc. */
 	private void initialize() {
 		this.blueWater = new ImageIcon(getClass().getResource("/view/img/blueWater.png"));
 		this.greenWater = new ImageIcon(getClass().getResource("/view/img/greenWater.png"));
@@ -49,7 +81,6 @@ public class Playground extends JPanel implements Observer {
 		this.greyWater = new ImageIcon(getClass().getResource("/view/img/greyWater.png"));
 		this.setMaximumSize(new Dimension(400, 400));
 		this.fieldContainer.setLayout(new BorderLayout());
-		GridLayout g = new GridLayout(1, 2);
 		this.setLayout(new FlowLayout());
 		this.buttons.setLayout(new GridLayout(3, 1));
 		GridLayout grid = new GridLayout(10, 10);
@@ -100,30 +131,67 @@ public class Playground extends JPanel implements Observer {
 		}	
 	}
 	
+	/**
+	 * adds listener to a specific field button.
+	 * 
+	 * @param x x coordinate.
+	 * @param y y coordinate.
+	 * @param l the listener.
+	 */
 	public void addFieldButtonListener(int x, int y, ActionListener l) {
 		this.fieldButtons[x][y].addActionListener(l);
 	}
 	
+	/**
+	 * adds listener to the place ships button.
+	 * 
+	 * @param l the listener.
+	 */
 	public void addPlaceShipsButtonListener(ActionListener l) {
 		this.placeShips.addActionListener(l);
 	}
 	
+	/**
+	 * adds listener to the next move button.
+	 * 
+	 * @param l the listener.
+	 */
 	public void addNextMoveButtonListener(ActionListener l) {
 		this.nextMove.addActionListener(l);
 	}
 	
+	/**
+	 * adds listener to the run through button.
+	 * 
+	 * @param l the listener.
+	 */
 	public void addRunThroughButtonListener(ActionListener l) {
 		this.runThrough.addActionListener(l);
 	}
 	
+	/**
+	 * set enabled for the place ships button.
+	 * 
+	 * @param enabled enabled value.
+	 */
 	public void setPlaceShipsButtonEnabled(boolean enabled) {
 		this.placeShips.setEnabled(enabled);
 	}
 	
+	/**
+	 * set enabled for the next move button.
+	 * 
+	 * @param enabled enabled value.
+	 */
 	public void setNextMoveButtonEnabled(boolean enabled) {
 		this.nextMove.setEnabled(enabled);
 	}
 	
+	/**
+	 * set enabled for the run through button.
+	 * 
+	 * @param enabled enabled value.
+	 */
 	public void setRunThroughButtonEnabled(boolean enabled) {
 		this.runThrough.setEnabled(enabled);
 	}

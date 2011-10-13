@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.JOptionPane;
 
@@ -20,18 +18,41 @@ import view.Playground;
 
 import model.Coordinate;
 import model.Field;
-import model.Settings;
 import model.Ship;
 
+/**
+ * this controller is responsible for the coordination of the game.
+ * so it is responsible for setting up the playground (by placing the 
+ * ships), to inizialize a new game and a new player and to coordinate
+ * the game flow.
+ * 
+ * @author Jakob
+ *
+ */
 public class GameHandler extends Observable implements Observer {
 	
+	/** represents the playground. (model) */
 	private Field field;
-	private List<Ship> ships;
-	private SettingsHandler settingsHandler;
-	private Playground playground;
-	private IPlayer player;
-	private Thread t;
 	
+	/** a list of the ships. (model) */
+	private List<Ship> ships;
+	
+	/** the controller for handling the settings. */
+	private SettingsHandler settingsHandler;
+	
+	/** the view for the playground. */
+	private Playground playground;
+	
+	/** the player that plays the game. */
+	private IPlayer player;
+	
+	
+	/**
+	 * constructor. 
+	 * 
+	 * @param playground the view of the playground.
+	 * @param settingsHandler the controller for handling the settings.
+	 */
 	public GameHandler(Playground playground, SettingsHandler settingsHandler) {
 		this.ships = new ArrayList<Ship>();
 		this.settingsHandler = settingsHandler;
@@ -42,6 +63,9 @@ public class GameHandler extends Observable implements Observer {
 		this.addActionListener();
 	}
 	
+	/**
+	 * adds the action listeners to the buttons of the playground view.
+	 */
 	private void addActionListener() {
 		this.addFieldButtonListener();
 		this.addPlaceShipsButtonListener();
@@ -49,6 +73,11 @@ public class GameHandler extends Observable implements Observer {
 		this.addRunThroughButtonListener();
 	}
 	
+	/**
+	 * adds the controller to the field buttons.
+	 *
+	 */
+	//TODO remove!?
 	private void addFieldButtonListener() {
 		for(int x = 0; x < 10; x++) {
 			for(int y = 0; y < 10; y++) {
@@ -66,6 +95,9 @@ public class GameHandler extends Observable implements Observer {
 		}
 	}
 	
+	/**
+	 * add the listener to the place ships button.
+	 */
 	private void addPlaceShipsButtonListener() {
 		this.playground.addPlaceShipsButtonListener(new ActionListener() {
 			
@@ -79,6 +111,9 @@ public class GameHandler extends Observable implements Observer {
 		});
 	}
 	
+	/**
+	 * add the listener to the next move button.
+	 */
 	private void addNextMoveButtonListener() {
 		this.playground.addNextMoveButtonListener(new ActionListener() {
 			
@@ -92,6 +127,9 @@ public class GameHandler extends Observable implements Observer {
 		});
 	}
 	
+	/**
+	 * add the listener to the run through button.
+	 */
 	private void addRunThroughButtonListener() {
 		this.playground.addRunThroughButtonListener(new ActionListener() {
 			
@@ -104,6 +142,12 @@ public class GameHandler extends Observable implements Observer {
 		});
 	}
 	
+	/**
+	 * method for placing the ships. It specifies an inner threshold that is
+	 * responsible for avoiding infinite loops (they can occur if there are
+	 * many ships -> sometimes constellations are created where the remaining
+	 * ships never can be placed due to inefficient space allocations.)
+	 */
 	private void placeShips() {
 		int threshold = 1000;
 		ships = new ArrayList<Ship>();
@@ -129,6 +173,16 @@ public class GameHandler extends Observable implements Observer {
 		}
 	}
 	
+	/**
+	 * supports the place Ships method and is responsible for checking whether
+	 * a ship can be placed by starting at the specified field.
+	 * 
+	 * @param x the x coordinate of the field.
+	 * @param y the y coordinate of the field.
+	 * @param direction the choosen direction.
+	 * @param length the length of the ship.
+	 * @return true if there is enough space, false if the ship would cross the playgrounds boundaries.
+	 */
 	private boolean checkSpace(int x, int y, int direction, int length) {
 		if(direction == 0) {
 			if(x + (length - 1) <= 9) {
@@ -150,6 +204,16 @@ public class GameHandler extends Observable implements Observer {
 		return false;
 	}
 	
+	/**
+	 * is called if the checkSpace method evaluated a field to true. This method
+	 * checks if the ship would collide with another ship.
+	 * 
+	 * @param x x coordinate of the field.
+	 * @param y y coordinate of the field.
+	 * @param direction the chosen direction.
+	 * @param length the length of the ship.
+	 * @return true if there isn't a collision, false otherwise.
+	 */
 	private boolean checkCollisions(int x, int y, int direction, int length) {
 		if(direction == 0) {
 			if(this.shipPlaced(x-1, y)) {
@@ -203,6 +267,13 @@ public class GameHandler extends Observable implements Observer {
 		return true;
 	}
 	
+	/**
+	 * checks if a ship is placed at a specific field.
+	 * 
+	 * @param x x coordinate of the field.
+	 * @param y y coordinate of the field.
+	 * @return true if there is a ship, false otherwise.
+	 */
 	private boolean shipPlaced(int x, int y) {
 		if(x < 0 || x > 9 || y < 0 || y > 9) return false;
 		for(Ship s : this.ships) {
@@ -215,6 +286,14 @@ public class GameHandler extends Observable implements Observer {
 		return false;
 	}
 	
+	/**
+	 * if a ship passed all checks, it is created in this method.
+	 * 
+	 * @param x x coordinate of the starting field.
+	 * @param y y coordinate of the starting field.
+	 * @param direction the chosen direction.
+	 * @param length the length of the ship.
+	 */
 	private void createShip(int x, int y, int direction, int length) {
 		int xSign;
 		int ySign;
@@ -239,6 +318,9 @@ public class GameHandler extends Observable implements Observer {
 		this.ships.add(new Ship(list));
 	}
 	
+	/**
+	 * starts a game by initializing a new player.
+	 */
 	private void startGame() {
 		if(this.settingsHandler.getSettings().getPlayer() == 0) {
 			this.player = new RandomPlayer(this.settingsHandler.getSettings().getShipNumbers());
@@ -247,16 +329,23 @@ public class GameHandler extends Observable implements Observer {
 			this.player = new MediumPlayer(this.settingsHandler.getSettings().getShipNumbers());
 			this.addObserverToGameHandler(this.player);
 		} else if(this.settingsHandler.getSettings().getPlayer() == 2) {
-			//TODO
+			//TODO plug in the AI Player.
 		}
 	}
 	
+	/**
+	 * simulates the whole game until the last ship is sunk.
+	 */
 	public void runThrough() {
 		while(!this.nextMove()) {
 			//run
 		}
 	}
 	
+	/**
+	 * simulates the next step of the player.
+	 * @return true if all ships are sunk after the move, false otherwise.
+	 */
 	public boolean nextMove() {
 		this.attack(player.nextMove());
 		for(Ship s : this.ships) {
@@ -267,6 +356,12 @@ public class GameHandler extends Observable implements Observer {
 		return true;
 	}
 	
+	/**
+	 * simulates the attack and changes the model according to the
+	 * consequences of the attack. After that it sends an instance
+	 * of AttackResult to the observer (the player).
+	 * @param c
+	 */
 	private void attack(Coordinate c) {
 		boolean hit = false;
 		boolean sunk = false;
@@ -292,6 +387,10 @@ public class GameHandler extends Observable implements Observer {
 		this.clearChanged();
 	}
 	
+	/**
+	 * adds an observer.
+	 * @param o the observer to add.
+	 */
 	private void addObserverToGameHandler(Observer o) {
 		this.deleteObservers();
 		this.addObserver(o);
