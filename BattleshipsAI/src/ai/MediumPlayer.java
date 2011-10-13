@@ -7,14 +7,43 @@ import controller.AttackResult;
 
 import model.Coordinate;
 
+/**
+ * the medium player is able to focus on a ship once he hits
+ * it the first time. after that he tries to find a second 
+ * field of this ship by trying one of the max. 4 neighboured
+ * fields. As soon he finds the direction of the placement
+ * (horizontal or vertical) he tries to sink the ship. He also
+ * marks all fields that have a common edge with a "ship-field",
+ * so it doesn't attack them as soon he found out where the ship
+ * is placed. The approach is quite simple but makes this type
+ * of player still powerful.
+ * 
+ * @author Jakob
+ *
+ */
 public class MediumPlayer extends AbstractPlayer {
 
+	/** stores the coordinate of the last attack. */
 	private Coordinate lastAttack;
+	
+	/** stores the coordinate of the field where the last hit of a ship was performed. */
 	private Coordinate lastHit;
+	
+	/** is set to true as soon the player hits a ship and didn't sink it. */
 	private boolean foundShip;
+	
+	/** is true if a hit but not sunk ship is placed horizontal (and the player knows it). */
 	private boolean horizontal;
+	
+	/** is true if a hit but not sunk ship is placed vertical (and the player knows it). */
 	private boolean vertical;
 	
+	
+	/**
+	 * constructor.
+	 * 
+	 * @param shipNumbers the number of ships of different lengths.
+	 */
 	public MediumPlayer(HashMap<Integer, Integer> shipNumbers) {
 		super(shipNumbers);
 	}
@@ -57,12 +86,16 @@ public class MediumPlayer extends AbstractPlayer {
 		}  else {
 			this.field[lastAttack.getxPosition()][this.lastAttack.getyPosition()] = 1;
 		}
-		this.print();
 	}
 	
+	/**
+	 * is called whenever there is ship that is hit but not sunk. Tries either
+	 * to find out the direction the ship is placed and to hit it again.
+	 * @return
+	 */
 	private Coordinate prepareAttack() {
 		if(!this.horizontal && !this.vertical) {
-			this.searchDirection(lastHit.getxPosition(), lastHit.getyPosition());
+			this.searchDirection();
 		}
 		if(!this.horizontal && !this.vertical) {
 			while(true) {
@@ -91,8 +124,6 @@ public class MediumPlayer extends AbstractPlayer {
 				}
 			}
 		} else {
-			//int[] x = random();
-			//return new Coordinate(x[0], x[1]);
 			int cx = lastHit.getxPosition();
 			int cy = lastHit.getyPosition();
 			int x;
@@ -120,7 +151,12 @@ public class MediumPlayer extends AbstractPlayer {
 		}
 	}
 	
-	private void searchDirection(int x, int y) {
+	/**
+	 * tries to find out the direction a ship is placed.
+	 */
+	private void searchDirection() {
+		int x = this.lastHit.getxPosition();
+		int y = this.lastHit.getyPosition();
 		if((this.checkField(x + 1, y) && this.checkField(x, y)) || (this.checkField(x, y) && this.checkField(x - 1, y))) {
 			this.vertical = true;
 		}
@@ -129,6 +165,14 @@ public class MediumPlayer extends AbstractPlayer {
 		}
 	}
 	
+	/**
+	 * tries to find out if a field contains a hit but not sunk ship.
+	 * 
+	 * @param x x coordinate of the field.
+	 * @param y y coordinate of the field.
+	 * @return true if it contains a hit but not sunk ship and false if it doesn't
+	 * contain such a ship or if the field is out of playground's bounds.
+	 */
 	private boolean checkField(int x, int y) {
 		if(x < 0 || x > 9 || y < 0 || y > 9) {
 			return false;
@@ -141,6 +185,10 @@ public class MediumPlayer extends AbstractPlayer {
 		}
 	}
 	
+	/**
+	 * mark all neighboured fields of a ship that is sunk so that these
+	 * fields won't be attacked later, because they cannot contain a ship.
+	 */
 	private void markShip() {
 		for(int x = 0; x < 10; x++) {
 			for(int y = 0; y < 10; y++) {
@@ -151,6 +199,14 @@ public class MediumPlayer extends AbstractPlayer {
 		}
 	}
 	
+	/**
+	 * supports the markShip method. Checks for every ship-field
+	 * how many neighbours it has and marks them to avoid unnecessary attacks
+	 * in the future.
+	 * 
+	 * @param x x coordinate of the field.
+	 * @param y y coordinate of the field.
+	 */
 	private void markField(int x, int y) {
 		boolean yMaxBound = (y + 1 <= 9);
 		boolean yMinBound = (y - 1 >= 0);
@@ -187,6 +243,13 @@ public class MediumPlayer extends AbstractPlayer {
 		}
 	}
 	
+	/**
+	 * if there isn't a hit but not sunk ship, the player attacks a random
+	 * field that is computed in this method.
+	 * 
+	 * @return int[0] is the x coordinate, int[1] the y coordinate. avoids attacks
+	 * on fields that already have been attacked or can impossibly contain a ship.
+	 */
 	private int[] random() {
 		int x = ((int)(Math.random() * 10));
 		int y = ((int)(Math.random() * 10));
@@ -194,6 +257,10 @@ public class MediumPlayer extends AbstractPlayer {
 		return z;
 	}
 	
+	/**
+	 * just for test purposes.
+	 */
+	@SuppressWarnings("unused")
 	private void print() {
 		for(int i = 0; i < 10; i++) {
 			for(int j = 0; j < 10; j++) {

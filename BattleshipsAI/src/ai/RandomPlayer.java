@@ -7,8 +7,20 @@ import controller.AttackResult;
 
 import model.Coordinate;
 
+/**
+ * Dummy player, that attacks pure randomly. The only intelligent
+ * part is that it does not attack fields twice.
+ * 
+ * @author Jakob
+ *
+ */
 public class RandomPlayer extends AbstractPlayer {
 	
+	/**
+	 * constructor. 
+	 * 
+	 * @param shipNumbers the number of ships.
+	 */
 	public RandomPlayer(HashMap<Integer, Integer> shipNumbers) {
 		super(shipNumbers);
 	}
