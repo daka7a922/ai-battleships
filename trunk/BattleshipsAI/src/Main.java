@@ -1,5 +1,6 @@
 import controller.GameHandler;
 import controller.SettingsHandler;
+import controller.StatisticsHandler;
 import view.MainFrame;
 import view.Playground;
 import view.SettingsView;
@@ -25,7 +26,8 @@ public class Main {
 		SettingsView s = new SettingsView();
 		Statistics st = new Statistics();
 		SettingsHandler settingsHandler = new SettingsHandler(s);
-		new GameHandler(p, settingsHandler);
+		StatisticsHandler statisticsHandler = new StatisticsHandler(st);
+		new GameHandler(p, settingsHandler, statisticsHandler);
 		MainFrame m = new MainFrame(p, s, st);
 		m.setVisible(true);
 	}
