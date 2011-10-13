@@ -40,11 +40,20 @@ public class GameHandler extends Observable implements Observer {
 	/** the controller for handling the settings. */
 	private SettingsHandler settingsHandler;
 	
+	/** the controller for handling the statistics. */
+	private StatisticsHandler statisticsHandler;
+	
 	/** the view for the playground. */
 	private Playground playground;
 	
 	/** the player that plays the game. */
 	private IPlayer player;
+	
+	private int shots;
+	
+	private String playerName;
+	
+	private static final String[] playerNames = {"Random Player", "Medium Player", "AI Player"};
 	
 	
 	/**
@@ -53,9 +62,10 @@ public class GameHandler extends Observable implements Observer {
 	 * @param playground the view of the playground.
 	 * @param settingsHandler the controller for handling the settings.
 	 */
-	public GameHandler(Playground playground, SettingsHandler settingsHandler) {
+	public GameHandler(Playground playground, SettingsHandler settingsHandler, StatisticsHandler statisticsHandler) {
 		this.ships = new ArrayList<Ship>();
 		this.settingsHandler = settingsHandler;
+		this.statisticsHandler = statisticsHandler;
 		this.playground = playground;
 		this.field = new Field();
 		this.field.addObserver(playground);
@@ -331,6 +341,8 @@ public class GameHandler extends Observable implements Observer {
 		} else if(this.settingsHandler.getSettings().getPlayer() == 2) {
 			//TODO plug in the AI Player.
 		}
+		this.shots = 0;
+		this.playerName = playerNames[this.settingsHandler.getSettings().getPlayer()];
 	}
 	
 	/**
@@ -347,12 +359,14 @@ public class GameHandler extends Observable implements Observer {
 	 * @return true if all ships are sunk after the move, false otherwise.
 	 */
 	public boolean nextMove() {
+		this.shots++;
 		this.attack(player.nextMove());
 		for(Ship s : this.ships) {
 			if(!s.sunk()) {
 				return false;
 			}
 		}
+		this.statisticsHandler.addStatistic(this.playerName, this.shots, (this.shots - this.getShipFieldNumber()));
 		return true;
 	}
 	
@@ -414,5 +428,13 @@ public class GameHandler extends Observable implements Observer {
 			this.playground.setNextMoveButtonEnabled(false);
 			this.playground.setRunThroughButtonEnabled(false);
 		}
+	}
+	
+	private int getShipFieldNumber() {
+		int result = 0;
+		for(int i : this.settingsHandler.getSettings().getShipNumbers().keySet()) {
+			result = result + (i * this.settingsHandler.getSettings().getShipNumbers().get(i));
+		}
+		return result;
 	}
 }

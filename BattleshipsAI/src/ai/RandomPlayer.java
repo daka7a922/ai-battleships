@@ -41,19 +41,19 @@ public class RandomPlayer extends AbstractPlayer {
 		AttackResult a = (AttackResult)arg;
 		if(a.isHit()) {
 			if(!a.isSunk()) {
-				System.out.println("Treffer");
+				//System.out.println("Treffer");
 			} else {
 				int i = this.shipNumbers.get(a.getShipLength());
 				this.shipNumbers.put(a.getShipLength(), i-1);
-				System.out.println("Treffer versenkt (" + a.getShipLength() + ")");
-				System.out.print("Verbleibende Schiffe: ");
+				//System.out.println("Treffer versenkt (" + a.getShipLength() + ")");
+				//System.out.print("Verbleibende Schiffe: ");
 				for(int x : this.shipNumbers.keySet()) {
-					System.out.print(x + "(" + this.shipNumbers.get(x) + ") ");
+					//System.out.print(x + "(" + this.shipNumbers.get(x) + ") ");
 				}
-				System.out.println();
+				//System.out.println();
 			}
 		} else {
-			System.out.println("Daneben");
+			//System.out.println("Daneben");
 		}
 	}
 	
