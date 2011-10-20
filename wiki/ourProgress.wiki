@@ -1,3 +1,9 @@
+== 20.10.2011 ==
+
+After playin' around a bit with different Prolog libraries we found a library that seems to be helpful for our purposes. It is the tuProlog API, that provides a simple and straightforward approach to infer new knowledge from the knowledge base.
+
+Currently, we are working on the structure for a knowledge base that can support the AI player.
+
 == 12.10.2011 ==
 
 The last two weeks we spended for a clean setup of a test environment. This is now running stable so far. It includes the following parts: a settings section where the user can specify the options (number of ships and type of player). A game section where the game can be started and the progress of the player is visualized. And a statistics section that isn't implemented yet but hopefully will be in 1 - 2 days.
