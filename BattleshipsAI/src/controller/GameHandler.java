@@ -10,6 +10,7 @@ import java.util.Observer;
 
 import javax.swing.JOptionPane;
 
+import ai.AIPlayer;
 import ai.IPlayer;
 import ai.MediumPlayer;
 import ai.RandomPlayer;
@@ -339,7 +340,8 @@ public class GameHandler extends Observable implements Observer {
 			this.player = new MediumPlayer(this.settingsHandler.getSettings().getShipNumbers());
 			this.addObserverToGameHandler(this.player);
 		} else if(this.settingsHandler.getSettings().getPlayer() == 2) {
-			//TODO plug in the AI Player.
+			this.player = new AIPlayer(this.settingsHandler.getSettings().getShipNumbers());
+			this.addObserverToGameHandler(this.player);
 		}
 		this.shots = 0;
 		this.playerName = playerNames[this.settingsHandler.getSettings().getPlayer()];
