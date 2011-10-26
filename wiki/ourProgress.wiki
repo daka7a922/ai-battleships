@@ -5,9 +5,9 @@ We achieved an implementation based on Prolog that is equivalent to our Medium P
 We also let compete this player against our Medium Player - they achieve the same performance.
 
 Our next steps are:
-*Identifying weaknesses
-**The remaining ships are not taken into account so far
-**The player always attacks a random field when there isn't any hit but not sunk ship.
+Identifying weaknesses.
+->The remaining ships are not taken into account so far.
+->The player always attacks a random field when there isn't any hit but not sunk ship.
 
 We try to find ways that enables the player to make assumptions about probabilities of different moves (is there a move with a higher probability f success than other moves?). We aren't sure how much of this can be done by the use of Prolog, or if we have to add additional features/libraries.
 
