@@ -1,3 +1,16 @@
+== 26.10.2011 ==
+
+We achieved an implementation based on Prolog that is equivalent to our Medium Player approach. This player sets up a knowledge base in the beginning were it defines basic knowledge about the fields, their common edges, etc. It is also possible to insert information about the games progress. If a field was found to be empty this information is also added to the knowledge base. In addition, it includes knowledge about found ships, fields belonging to these ships and so on. On the foundation of a few more or less simple rules it is possible to infer alternatives for the next move. If the player found a ship but didn't sink it yet, it is able to find the fields that can include other parts of this ship.
+
+We also let compete this player against our Medium Player - they achieve the same performance.
+
+Our next steps are:
+*Identifying weaknesses
+**The remaining ships are not taken into account so far
+**The player always attacks a random field when there isn't any hit but not sunk ship.
+
+We try to find ways that enables the player to make assumptions about probabilities of different moves (is there a move with a higher probability f success than other moves?). We aren't sure how much of this can be done by the use of Prolog, or if we have to add additional features/libraries.
+
 == 20.10.2011 ==
 
 After playin' around a bit with different Prolog libraries we found a library that seems to be helpful for our purposes. It is the tuProlog API, that provides a simple and straightforward approach to infer new knowledge from the knowledge base.
