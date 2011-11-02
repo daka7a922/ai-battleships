@@ -162,35 +162,19 @@ public class AIPlayer extends AbstractPlayer {
 		List<String> candidates = new ArrayList<String>();
 		if(this.shipNumbers.get(5) > 0) {
 			List<String> five = this.findFive();
-			if(five.size() > 0 && five.size() == this.shipNumbers.get(5)) {
-				return five;
-			} else {
-				candidates.addAll(five);
-			}
+			candidates.addAll(five);
 		}
 		if(this.shipNumbers.get(4) > 0) {
 			List<String> four = this.findFour();
-			if(four.size() > 0 && four.size() == this.shipNumbers.get(4)) {
-				return four;
-			} else {
-				candidates.addAll(four);
-			}
+			candidates.addAll(four);
 		}
 		if(this.shipNumbers.get(3) > 0) {
 			List<String> three = this.findThree();
-			if(three.size() > 0 && three.size() == this.shipNumbers.get(3)) {
-				return three;
-			} else {
-				candidates.addAll(three);
-			}
+			candidates.addAll(three);
 		}
 		if(this.shipNumbers.get(2) > 0) {
 			List<String> two = this.findTwo();
-			if(two.size() > 0 && two.size() == this.shipNumbers.get(2)) {
-				return two;
-			} else {
-				candidates.addAll(two);
-			}
+			candidates.addAll(two);
 		}
 		return candidates;
 	}
