@@ -25,9 +25,8 @@ X   X   ?
 the result of the same query would be empty.
 
 What we now want to do is to use this approach to compute statistical data. We try to find out the probabilities of including a ship for all fields. Therefore, different approaches are imaginable:
-
-* For every ship type (different lengths) get the possible positions and than iterate over all solutions for every ship type and search for the field with the maximal occurence. 
-* Do not iterate over the whole result set but do it seperately for every ship type. 
+ * For every ship type (different lengths) get the possible positions and than iterate over all solutions for every ship type and search for the field with the maximal occurence. 
+ * Do not iterate over the whole result set but do it seperately for every ship type. 
 
 == 26.10.2011 ==
 
@@ -37,8 +36,8 @@ We also let compete this player against our Medium Player - they achieve the sam
 
 Our next steps are:
 Identifying weaknesses.
-* The remaining ships are not taken into account so far.
-* The player always attacks a random field when there isn't any hit but not sunk ship.
+ * The remaining ships are not taken into account so far.
+ * The player always attacks a random field when there isn't any hit but not sunk ship.
 
 We try to find ways that enable the player to make assumptions about probabilities of different moves (is there a move with a higher probability f success than other moves?). We aren't sure how much of this can be done by the use of Prolog, or if we have to add additional features/libraries.
 
