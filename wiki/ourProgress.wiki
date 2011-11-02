@@ -7,7 +7,9 @@ Nevertheless, at least we found a way to get all possible placings for exactly o
 Assume the following field
 
 ? ? X
+
 ? X ?
+
 X X ?
 
 A query that asks for all possibilities to place a ship with a length of two would return the result set "{00, 01}, {00, 10}, {21, 22}".
@@ -15,7 +17,9 @@ A query that asks for all possibilities to place a ship with a length of two wou
 For the field
 
 ? X X
+
 X ? X
+
 X X ?
 
 the result of the same query would be empty.
