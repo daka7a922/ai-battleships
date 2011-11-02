@@ -1,9 +1,13 @@
 package ai;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import controller.AttackResult;
 
@@ -44,7 +48,8 @@ public class AIPlayer extends AbstractPlayer {
 			}
 			else {
 				//what to do if there isn't a concrete evidence for a ship.
-				int[] a = this.random();
+				List<String> candidates = this.findShipCandidates();
+				int[] a = this.choseField(candidates);
 				String var = "x" + a[0] + "" + a[1];
 				try {
 					s = p.solve("not(shipPart(" + var + ")), not(sunk(" + var + ")), not(empty(" + var + ")).");
@@ -63,41 +68,6 @@ public class AIPlayer extends AbstractPlayer {
 	private List<String> searchForCandidates() {
 		List<String> result = new ArrayList<String>();
 		try {
-			List<String> ships = new ArrayList<String>();
-			SolveInfo inf = this.p.solve("ship(S).");
-			while(inf != null && inf.isSuccess()) {
-				Term term = inf.getVarValue("S");
-				ships.add(term.toString());
-				try {
-					inf = this.p.solveNext();
-				} catch (NoMoreSolutionException e) {
-					inf = null;
-				}
-			}
-			for(String st : ships) {
-				SolveInfo i = this.p.solve("ship(" + st + "), partOf(" + st + ", X), xEdge(X, Y), partOf(" + st + ", Y).");
-				while(i != null && i.isSuccess()) {
-					Term x = i.getVarValue("X");
-					Term y = i.getVarValue("Y");
-					System.out.println("X = " + x.toString() + ", Y = " + y.toString());
-					try {
-						i = this.p.solveNext();
-					} catch (NoMoreSolutionException e) {
-						i = null;
-					}
-				}
-				SolveInfo j = this.p.solve("ship(" + st + "), partOf(" + st + ", X), yEdge(X, Y), partOf(" + st + ", Y).");
-				while(j != null && j.isSuccess()) {
-					Term x = j.getVarValue("X");
-					Term y = j.getVarValue("Y");
-					System.out.println("X = " + x.toString() + ", Y = " + y.toString());
-					try {
-						j = this.p.solveNext();
-					} catch (NoMoreSolutionException e) {
-						j = null;
-					}
-				}
-			}
 			SolveInfo s = this.p.solve("candidate(X).");
 			while(s != null && s.isSuccess()) {
 				Term term = s.getVarValue("X");
@@ -147,6 +117,8 @@ public class AIPlayer extends AbstractPlayer {
 			}
 		} else {
 			try {
+				int n = this.shipNumbers.get(ar.getShipLength());
+				this.shipNumbers.put(ar.getShipLength(),  n - 1);
 				this.p.addTheory(new Theory(new Theory("sunk(x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition()) + ")."));
 				try {
 					SolveInfo inf = this.p.solve("ship(S), edge(X, x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition() + "), " + "partOf(S, X).");
@@ -185,6 +157,143 @@ public class AIPlayer extends AbstractPlayer {
 			e.printStackTrace();
 		}
 	}
+	
+	private List<String> findShipCandidates() {
+		List<String> candidates = new ArrayList<String>();
+		if(this.shipNumbers.get(5) > 0) {
+			List<String> five = this.findFive();
+			if(five.size() > 0 && five.size() == this.shipNumbers.get(5)) {
+				return five;
+			} else {
+				candidates.addAll(five);
+			}
+		}
+		if(this.shipNumbers.get(4) > 0) {
+			List<String> four = this.findFour();
+			if(four.size() > 0 && four.size() == this.shipNumbers.get(4)) {
+				return four;
+			} else {
+				candidates.addAll(four);
+			}
+		}
+		if(this.shipNumbers.get(3) > 0) {
+			List<String> three = this.findThree();
+			if(three.size() > 0 && three.size() == this.shipNumbers.get(3)) {
+				return three;
+			} else {
+				candidates.addAll(three);
+			}
+		}
+		if(this.shipNumbers.get(2) > 0) {
+			List<String> two = this.findTwo();
+			if(two.size() > 0 && two.size() == this.shipNumbers.get(2)) {
+				return two;
+			} else {
+				candidates.addAll(two);
+			}
+		}
+		return candidates;
+	}
+	
+	private List<String> findFive() {
+		List<String> five = new ArrayList<String>();
+		try {
+			SolveInfo inf = this.p.solve("five(A, B, C, D, E).");
+			while(inf != null && inf.isSuccess()) { 
+				five.add(inf.getVarValue("A").toString() + 
+								" " + 
+								inf.getVarValue("B").toString() + 
+								" " + 
+								inf.getVarValue("C").toString() + 
+								" " + 
+								inf.getVarValue("D").toString() + 
+								" " + 
+								inf.getVarValue("E").toString());		
+				try {
+					inf = this.p.solveNext();
+				} catch (NoMoreSolutionException e) {
+					inf = null;
+				}
+			}
+		} catch (NoSolutionException e1) {
+			e1.printStackTrace();
+		} catch (MalformedGoalException e) {
+			e.printStackTrace();
+		}
+		return five;
+	}
+	
+	private List<String> findFour() {
+		List<String> four = new ArrayList<String>();
+		try {
+			SolveInfo inf = this.p.solve("four(A, B, C, D).");
+			while(inf != null && inf.isSuccess()) { 
+				four.add(inf.getVarValue("A").toString() + 
+								" " + 
+								inf.getVarValue("B").toString() + 
+								" " + 
+								inf.getVarValue("C").toString() + 
+								" " + 
+								inf.getVarValue("D").toString());	
+				try {
+					inf = this.p.solveNext();
+				} catch (NoMoreSolutionException e) {
+					inf = null;
+				}
+			}
+		} catch (NoSolutionException e1) {
+			e1.printStackTrace();
+		} catch (MalformedGoalException e) {
+			e.printStackTrace();
+		}
+		return four;
+	}
+	
+	private List<String> findThree() {
+		List<String> three = new ArrayList<String>();
+		try {
+			SolveInfo inf = this.p.solve("three(A, B, C).");
+			while(inf != null && inf.isSuccess()) { 
+				three.add(inf.getVarValue("A").toString() + 
+								" " + 
+								inf.getVarValue("B").toString() + 
+								" " + 
+								inf.getVarValue("C").toString());	
+				try {
+					inf = this.p.solveNext();
+				} catch (NoMoreSolutionException e) {
+					inf = null;
+				}
+			}
+		} catch (NoSolutionException e1) {
+			e1.printStackTrace();
+		} catch (MalformedGoalException e) {
+			e.printStackTrace();
+		}
+		return three;
+	}
+	
+	private List<String> findTwo() {
+		List<String> two = new ArrayList<String>();
+		try {
+			SolveInfo inf = this.p.solve("two(A, B).");
+			while(inf != null && inf.isSuccess()) { 
+				two.add(inf.getVarValue("A").toString() + 
+								" " + 
+								inf.getVarValue("B").toString());	
+				try {
+					inf = this.p.solveNext();
+				} catch (NoMoreSolutionException e) {
+					inf = null;
+				}
+			}
+		} catch (NoSolutionException e1) {
+			e1.printStackTrace();
+		} catch (MalformedGoalException e) {
+			e.printStackTrace();
+		}
+		return two;
+	}
 
 	private void initializeKnowledgeBase() {
 		this.p = new Prolog();
@@ -198,7 +307,7 @@ public class AIPlayer extends AbstractPlayer {
 				}
 				if(i - 1 >= 0) {
 					p.addTheory(new Theory("edge(x" + i + "" + j + ", x" + (i - 1) + "" + j + ")."));
-					p.addTheory(new Theory("xEdge(x" + i + "" + j + ", x" + (i - 1) + "" + j + ")."));
+					//p.addTheory(new Theory("xEdge(x" + i + "" + j + ", x" + (i - 1) + "" + j + ")."));
 				}
 				if(j + 1 < 10) {
 					p.addTheory(new Theory("edge(x" + i + "" + j + ", x" + i + "" + (j + 1) + ")."));
@@ -206,7 +315,7 @@ public class AIPlayer extends AbstractPlayer {
 				}
 				if(j - 1 >= 0) {
 					p.addTheory(new Theory("edge(x" + i + "" + j + ", x" + i + "" + (j - 1) + ")."));
-					p.addTheory(new Theory("yEdge(x" + i + "" + j + ", x" + i + "" + (j - 1) + ")."));
+					//p.addTheory(new Theory("yEdge(x" + i + "" + j + ", x" + i + "" + (j - 1) + ")."));
 				}
 			}
 		}
@@ -214,17 +323,54 @@ public class AIPlayer extends AbstractPlayer {
 		p.addTheory(new Theory("candidate(Y) :- ship(S), not(sunk(S)), partOf(S, X), edge(X, Y), not(empty(Y)), not(shipPart(Y)), not(xDirection(S)), not(yDirection(S))."));
 		p.addTheory(new Theory("candidate(Y) :- ship(S), not(sunk(S)), partOf(S, X), xEdge(X, Y), not(empty(Y)), not(shipPart(Y)), xDirection(S), not(yDirection(S))."));
 		p.addTheory(new Theory("candidate(Y) :- ship(S), not(sunk(S)), partOf(S, X), yEdge(X, Y), not(empty(Y)), not(shipPart(Y)), yDirection(S), not(xDirection(S))."));
+		p.addTheory(new Theory("candidate(Y) :- ship(S), not(sunk(S)), partOf(S, X), xEdge(Y, X), not(empty(Y)), not(shipPart(Y)), xDirection(S), not(yDirection(S))."));
+		p.addTheory(new Theory("candidate(Y) :- ship(S), not(sunk(S)), partOf(S, X), yEdge(Y, X), not(empty(Y)), not(shipPart(Y)), yDirection(S), not(xDirection(S))."));
 		p.addTheory(new Theory("xDirection(S) :- ship(S), partOf(S, X), xEdge(X, Y), partOf(S, Y)."));
 		p.addTheory(new Theory("yDirection(S) :- ship(S), partOf(S, X), yEdge(X, Y), partOf(S, Y)."));
+		p.addTheory(new Theory("two(A, B) :- xEdge(A, B), not(shipPart(A)), not(shipPart(B)), not(empty(A)), not(empty(B))."));
+		p.addTheory(new Theory("two(A, B) :- yEdge(A, B), not(shipPart(A)), not(shipPart(B)), not(empty(A)), not(empty(B))."));
+		p.addTheory(new Theory("three(A, B, C) :- xEdge(A, B), xEdge(B, C), not(shipPart(A)), not(shipPart(B)), not(shipPart(C)), not(empty(A)), not(empty(B)), not(empty(C))."));
+		p.addTheory(new Theory("three(A, B, C) :- yEdge(A, B), yEdge(B, C), not(shipPart(A)), not(shipPart(B)), not(shipPart(C)), not(empty(A)), not(empty(B)), not(empty(C))."));
+		p.addTheory(new Theory("four(A, B, C, D) :- xEdge(A, B), xEdge(B, C), xEdge(C, D), not(shipPart(A)), not(shipPart(B)), not(shipPart(C)), not(shipPart(D)), not(empty(A)), not(empty(B)), not(empty(C)), not(empty(D))."));
+		p.addTheory(new Theory("four(A, B, C, D) :- yEdge(A, B), yEdge(B, C), yEdge(C, D), not(shipPart(A)), not(shipPart(B)), not(shipPart(C)), not(shipPart(D)), not(empty(A)), not(empty(B)), not(empty(C)), not(empty(D))."));
+		p.addTheory(new Theory("five(A, B, C, D, E) :- xEdge(A, B), xEdge(B, C), xEdge(C, D), xEdge(D, E), not(shipPart(A)), not(shipPart(B)), not(shipPart(C)), not(shipPart(D)), not(shipPart(E)), not(empty(A)), not(empty(B)), not(empty(C)), not(empty(D)), not(empty(E))."));
+		p.addTheory(new Theory("five(A, B, C, D, E) :- yEdge(A, B), yEdge(B, C), yEdge(C, D), yEdge(D, E), not(shipPart(A)), not(shipPart(B)), not(shipPart(C)), not(shipPart(D)), not(shipPart(E)), not(empty(A)), not(empty(B)), not(empty(C)), not(empty(D)), not(empty(E))."));
 		} catch (InvalidTheoryException e) {
 			e.printStackTrace();
 		}	
 	}
 	
-	private int[] random() {
+	private int[] choseField(List<String> list) {
 		int[] result = new int[2];
-		result[0] = (int)((Math.random()) * 10);
-		result[1] = (int)((Math.random()) * 10);
+		HashMap<String, Integer> fields = new HashMap<String, Integer>();
+		for(String s : list) {
+			System.out.println(s);
+			String[] array = s.split(" ");
+			for(String a : array) {
+				if(!fields.keySet().contains(a)) {
+					fields.put(a, 1);
+				} else {
+					int x = fields.get(a);
+					fields.put(a, x + 1);
+				}
+			}
+		}
+		List<String> fieldList = new ArrayList<String>();
+		while(fields.keySet().size() > 0) {
+			int max = 0;
+			String field = "";
+			for(String str : fields.keySet()) {
+				if(fields.get(str) > max) {
+					max = fields.get(str);
+					field = str;
+				}
+			}
+			fields.remove(field);
+			fieldList.add(field);
+		}
+		System.out.println();
+		result[0] = Integer.parseInt(fieldList.get(0).substring(1, 2));
+		result[1] = Integer.parseInt(fieldList.get(0).substring(2, 3));
 		return result;
 	}
 }
