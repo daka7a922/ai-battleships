@@ -1,3 +1,25 @@
+== 02.11.2011 ==
+
+The last week we tried to find a way to get a set of all possible models from the knowledge base. For example in form of a query "I have 2 remaining ships with a length of 3. What are all possible combinations to place these two ships w.r.t. the current infomration in the knowledge base?" Unfortunately, wwe didn't a way to realize this until know. We tried different ideas but prolog didn't answer with helpful solutions.
+
+Nevertheless, at least we found a way to get all possible placings for exactly one ship. E.g. a query "Where can a ship with a length of 2 be placed?" is answered correctly w.r.t. the current information.
+
+Assume the following field
+
+? ? X
+? X ?
+X X ?
+
+A query that asks for all possibilities to place a ship with a length of two would return the result set "{00, 01}, {00, 10}, {21, 22}".
+
+For the field
+
+? X X
+X ? X
+X X ?
+
+the result of the same query would be empty.
+
 == 26.10.2011 ==
 
 We achieved an implementation based on Prolog that is equivalent to our Medium Player approach. This player sets up a knowledge base in the beginning were it defines basic knowledge about the fields, their common edges, etc. It is also possible to insert information about the games progress. If a field was found to be empty this information is also added to the knowledge base. In addition, it includes knowledge about found ships, fields belonging to these ships and so on. On the foundation of a few more or less simple rules it is possible to infer alternatives for the next move. If the player found a ship but didn't sink it yet, it is able to find the fields that can include other parts of this ship.
@@ -9,7 +31,7 @@ Identifying weaknesses.
 ->The remaining ships are not taken into account so far.
 ->The player always attacks a random field when there isn't any hit but not sunk ship.
 
-We try to find ways that enables the player to make assumptions about probabilities of different moves (is there a move with a higher probability f success than other moves?). We aren't sure how much of this can be done by the use of Prolog, or if we have to add additional features/libraries.
+We try to find ways that enable the player to make assumptions about probabilities of different moves (is there a move with a higher probability f success than other moves?). We aren't sure how much of this can be done by the use of Prolog, or if we have to add additional features/libraries.
 
 == 20.10.2011 ==
 
