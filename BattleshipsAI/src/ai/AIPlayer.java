@@ -24,9 +24,9 @@ import model.Coordinate;
 
 public class AIPlayer extends AbstractPlayer {
 
-	private Prolog p;
-	private Coordinate lastAttack;
-	private int shipsFound;
+	protected Prolog p;
+	protected Coordinate lastAttack;
+	protected int shipsFound;
 	
 	public AIPlayer(HashMap<Integer, Integer> shipNumbers) {
 		super(shipNumbers);
@@ -65,7 +65,7 @@ public class AIPlayer extends AbstractPlayer {
 		}
 	}
 	
-	private List<String> searchForCandidates() {
+	protected List<String> searchForCandidates() {
 		List<String> result = new ArrayList<String>();
 		try {
 			SolveInfo s = this.p.solve("candidate(X).");
@@ -136,7 +136,7 @@ public class AIPlayer extends AbstractPlayer {
 		}
 	}
 	
-	private void markFieldsAroundShip(String s) {
+	protected void markFieldsAroundShip(String s) {
 		try {
 			SolveInfo inf = this.p.solve("partOf(" + s + ", X), edge(X, Y), not(shipPart(Y)), not(empty(Y)).");
 			while(inf != null && inf.isSuccess()) {
@@ -158,7 +158,7 @@ public class AIPlayer extends AbstractPlayer {
 		}
 	}
 	
-	private List<String> findShipCandidates() {
+	protected List<String> findShipCandidates() {
 		List<String> candidates = new ArrayList<String>();
 		if(this.shipNumbers.get(5) > 0) {
 			List<String> five = this.findFive();
@@ -179,7 +179,7 @@ public class AIPlayer extends AbstractPlayer {
 		return candidates;
 	}
 	
-	private List<String> findFive() {
+	protected List<String> findFive() {
 		List<String> five = new ArrayList<String>();
 		try {
 			SolveInfo inf = this.p.solve("five(A, B, C, D, E).");
@@ -207,7 +207,7 @@ public class AIPlayer extends AbstractPlayer {
 		return five;
 	}
 	
-	private List<String> findFour() {
+	protected List<String> findFour() {
 		List<String> four = new ArrayList<String>();
 		try {
 			SolveInfo inf = this.p.solve("four(A, B, C, D).");
@@ -233,7 +233,7 @@ public class AIPlayer extends AbstractPlayer {
 		return four;
 	}
 	
-	private List<String> findThree() {
+	protected List<String> findThree() {
 		List<String> three = new ArrayList<String>();
 		try {
 			SolveInfo inf = this.p.solve("three(A, B, C).");
@@ -257,7 +257,7 @@ public class AIPlayer extends AbstractPlayer {
 		return three;
 	}
 	
-	private List<String> findTwo() {
+	protected List<String> findTwo() {
 		List<String> two = new ArrayList<String>();
 		try {
 			SolveInfo inf = this.p.solve("two(A, B).");
@@ -279,7 +279,7 @@ public class AIPlayer extends AbstractPlayer {
 		return two;
 	}
 
-	private void initializeKnowledgeBase() {
+	protected void initializeKnowledgeBase() {
 		this.p = new Prolog();
 		this.shipsFound = 0;
 		try {
@@ -324,7 +324,7 @@ public class AIPlayer extends AbstractPlayer {
 		}	
 	}
 	
-	private int[] choseField(List<String> list) {
+	protected int[] choseField(List<String> list) {
 		int[] result = new int[2];
 		HashMap<String, Integer> fields = new HashMap<String, Integer>();
 		for(String s : list) {
