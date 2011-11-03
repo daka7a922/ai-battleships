@@ -10,6 +10,7 @@ import java.util.Observer;
 
 import javax.swing.JOptionPane;
 
+import ai.AIAdvancedStatisticsPlayer;
 import ai.AIBrutForcePlayer;
 import ai.AIPlayer;
 import ai.AIStatisticsPlayer;
@@ -56,7 +57,7 @@ public class GameHandler extends Observable implements Observer {
 	
 	private String playerName;
 	
-	private static final String[] playerNames = {"Random Player", "Medium Player", "AI Player", "Statistical Player", "Brut Force Player"};
+	private static final String[] playerNames = {"Random Player", "Medium Player", "AI Player", "Statistical Player", "Advanced Statistical Player", "Brut Force Player"};
 	
 	
 	/**
@@ -348,6 +349,9 @@ public class GameHandler extends Observable implements Observer {
 			this.player = new AIStatisticsPlayer(this.settingsHandler.getSettings().getShipNumbers());
 			this.addObserverToGameHandler(this.player);
 		} else if(this.settingsHandler.getSettings().getPlayer() == 4) {
+			this.player = new AIAdvancedStatisticsPlayer(this.settingsHandler.getSettings().getShipNumbers());
+			this.addObserverToGameHandler(this.player);
+		} else if(this.settingsHandler.getSettings().getPlayer() == 5) {
 			this.player = new AIBrutForcePlayer(this.settingsHandler.getSettings().getShipNumbers());
 			this.addObserverToGameHandler(this.player);
 		}

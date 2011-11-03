@@ -65,7 +65,7 @@ public class SettingsView extends JPanel {
 	private static final String[] maxTwo = {"0", "1", "2"};
 	
 	/** values for the player type combo box. */
-	private static final String[] playerTypes = {"Random Player", "Medium Player", "AI Player", "Statistical Player", "Brut Force Player"};
+	private static final String[] playerTypes = {"Random Player", "Medium Player", "AI Player", "Statistical Player", "Advanced Statistical Player", "Brut Force Player"};
 	
 	/**
 	 * constructor.
