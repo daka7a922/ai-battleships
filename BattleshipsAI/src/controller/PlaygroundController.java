@@ -22,11 +22,9 @@ public class PlaygroundController implements Observer {
 	private GameController gc;
 	
 	private SettingsController settingsController;
+	private StatisticsViewController statisticsController;
 	
 	public PlaygroundController (PlaygroundView playground, SettingsController settingsController, StatisticsViewController statisticsController) {
-
-		//this.settingsHandler = settingsHandler;
-		//this.statisticsHandler = statisticsHandler;
 		
 		//his.field.addObserver(playground);
 
@@ -34,6 +32,7 @@ public class PlaygroundController implements Observer {
 		this.gc = new GameController(statisticsController);
 		this.gc.getField().addObserver(this.playground); 
 		this.settingsController = settingsController;
+		this.statisticsController = statisticsController;
 		this.settingsController.addObserver(this); 
 		this.addActionListener();
 	}
@@ -81,6 +80,7 @@ public class PlaygroundController implements Observer {
 				playground.setNextMoveButtonEnabled(true);
 				playground.setRunThroughButtonEnabled(true);
 				gc.placeShips();
+				statisticsController.output();
 			}
 		});
 	}
@@ -96,6 +96,7 @@ public class PlaygroundController implements Observer {
 				if(gc.nextMove()) {
 					playground.setNextMoveButtonEnabled(false);
 					playground.setRunThroughButtonEnabled(false);
+					statisticsController.output();
 				}
 			}
 		});
@@ -112,6 +113,7 @@ public class PlaygroundController implements Observer {
 				playground.setNextMoveButtonEnabled(false);
 				playground.setRunThroughButtonEnabled(false);
 				gc.runThrough();
+				statisticsController.output();
 			}
 		});
 	}
@@ -131,7 +133,8 @@ public class PlaygroundController implements Observer {
 				//
 				playground.setPlaceShipsButtonEnabled(true);
 				playground.setNextMoveButtonEnabled(false);
-				playground.setRunThroughButtonEnabled(false);		
+				playground.setRunThroughButtonEnabled(false);	
+				statisticsController.output();	
 			}
 		});	
 	}

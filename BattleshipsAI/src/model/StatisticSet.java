@@ -133,8 +133,8 @@ public class StatisticSet {
 		return result;
 	}
 	
-	public double getAverageTime() {
-		double result = 0;
+	public long getAverageTime() {
+		long result = 0;
 		for(Statistic s : this.statistics) {
 			result = result + s.getTime();
 		}
