@@ -9,7 +9,7 @@ import java.util.Observable;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import controller.AttackResult;
+import model.AttackResult;
 
 import alice.tuprolog.InvalidTheoryException;
 import alice.tuprolog.MalformedGoalException;
@@ -23,13 +23,15 @@ import alice.tuprolog.Theory;
 import model.Coordinate;
 
 public class AIPlayer extends AbstractPlayer {
-
+	
 	protected Prolog p;
 	protected Coordinate lastAttack;
 	protected int shipsFound;
 	
+	final String name = "AI Player 1";
+	
 	public AIPlayer(HashMap<Integer, Integer> shipNumbers) {
-		super(shipNumbers);
+		super(shipNumbers, "AI Player");
 		this.initializeKnowledgeBase();
 	}
 
