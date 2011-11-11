@@ -1,5 +1,4 @@
 import controller.GameController;
-import controller.GameHandler;
 import controller.PlaygroundController;
 import controller.SettingsController;
 import controller.StatisticsViewController;
