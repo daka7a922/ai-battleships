@@ -15,13 +15,13 @@ public class MainFrame extends JFrame {
 	private JTabbedPane mainPanel;
 	
 	/** the playground view. */
-	private Playground playground;
+	private PlaygroundView playground;
 	
 	/** the settings view. */
 	private SettingsView options;
 	
 	/** the statistics view. */
-	private Statistics statistics;
+	private StatisticsView statistics;
 	
 	/**
 	 * constructor.
@@ -30,7 +30,7 @@ public class MainFrame extends JFrame {
 	 * @param options settings view.
 	 * @param statistics statistics view.
 	 */
-	public MainFrame(Playground playground, SettingsView options, Statistics statistics) {
+	public MainFrame(PlaygroundView playground, SettingsView options, StatisticsView statistics) {
 		super();
 		this.mainPanel = new JTabbedPane();
 		this.playground = playground;

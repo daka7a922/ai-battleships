@@ -9,8 +9,13 @@ import java.util.Observable;
  *
  */
 public class Field extends Observable {
+
+	public final static int UNKONWN_EMPTY = 0;
+	public final static int UNKNOWN_SHIP = 1;
+	public final static int EMPTY = 2;
+	public final static int HIT = 3;
+	public final static int SUNK = 4;
 	
-	/** the playground as array of integers. */
 	private int[][] fields;
 	
 	/**
@@ -28,6 +33,15 @@ public class Field extends Observable {
 	 */
 	public int[][] getFields() {
 		return this.fields;
+	}
+	
+	/**
+	 * getter for the field.
+	 * 
+	 * @return the field.
+	 */
+	public int getValue(int x, int y) {
+		return this.fields[x][y];
 	}
 	
 	/**
@@ -50,7 +64,7 @@ public class Field extends Observable {
 	public void reset() {
 		for(int i = 0; i < 10; i++) {
 			for(int j = 0; j < 10; j++) {
-				this.setField(i, j, 0);
+				this.setField(i, j, Field.UNKONWN_EMPTY);
 			}
 		}
 	}

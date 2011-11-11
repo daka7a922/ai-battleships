@@ -12,20 +12,31 @@ import java.util.HashMap;
  *
  */
 public abstract class AbstractPlayer implements IPlayer {
-
+	
+	private String playerName;
+	
+	/**represents the playground. */
+	protected int[][] field;
+	
+	/** represents the number of ships. */
+	protected HashMap<Integer, Integer> shipNumbers;	
+	
 	/**
 	 * the constructor.
 	 * 
 	 * @param shipNumbers the number of ships of different lengths.
 	 */
 	@SuppressWarnings("unchecked")
-	public AbstractPlayer(HashMap<Integer, Integer> shipNumbers) {
-		this.shipNumbers = (HashMap<Integer, Integer>)shipNumbers.clone();
-		this.shipNumbers.clear();
-		for(int x : shipNumbers.keySet()) {
-			this.shipNumbers.put(x, shipNumbers.get(x));
-		}
+	public AbstractPlayer(HashMap<Integer, Integer> shipNumbers, String playerName) {
 		this.field = new int[10][10];
+		this.playerName = playerName;
+		this.shipNumbers = shipNumbers;
+		//this.shipNumbers.clear();
+
+		initializeField();
+	}
+	
+	void initializeField() {
 		for(int i = 0; i < 10; i++) {
 			for(int j = 0; j < 10; j++) {
 				this.field[i][j] = 0;
@@ -33,9 +44,13 @@ public abstract class AbstractPlayer implements IPlayer {
 		}
 	}
 	
-	/**represents the playground. */
-	protected int[][] field;
+	@Override
+	public String getPlayerName() {
+		return this.playerName;
+	}
 	
-	/** represents the number of ships. */
-	protected HashMap<Integer, Integer> shipNumbers;
+	@Override
+	public void reset() {
+		initializeField();
+	}
 }

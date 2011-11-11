@@ -2,6 +2,8 @@ package model;
 
 import java.util.HashMap;
 
+import ai.IPlayer;
+
 /**
  * the model representation of the settings.
  * 
@@ -14,7 +16,7 @@ public class Settings {
 	private HashMap<Integer, Integer> shipNumbers;
 	
 	/** the number of the player type (0 = random, 1 = medium, 2 = AI). */
-	private int player;
+	private IPlayer player;
 	
 	/**
 	 * constructor.
@@ -46,7 +48,7 @@ public class Settings {
 	 * 
 	 * @return number of playertype.
 	 */
-	public int getPlayer() {
+	public IPlayer getPlayer() {
 		return this.player;
 	}
 	
@@ -55,7 +57,7 @@ public class Settings {
 	 * 
 	 * @param player the new player type number.
 	 */
-	public void setPlayer(int player) {
+	public void setPlayer(IPlayer player) {
 		this.player = player;
 	}
 }

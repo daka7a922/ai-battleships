@@ -1,5 +1,6 @@
 package ai;
 
+import java.util.HashMap;
 import java.util.Observer;
 
 import model.Coordinate;
@@ -21,4 +22,8 @@ public interface IPlayer extends Observer {
 	 * @return the coordinate object that contains the x and y value.
 	 */
 	Coordinate nextMove();
+	
+	String getPlayerName();
+	
+	void reset();
 }

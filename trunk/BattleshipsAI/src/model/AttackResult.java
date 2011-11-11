@@ -1,4 +1,4 @@
-package controller;
+package model;
 
 /**
  * Contains all information a player needs to know about
