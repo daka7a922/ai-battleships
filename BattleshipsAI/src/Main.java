@@ -1,10 +1,12 @@
+import controller.GameController;
 import controller.GameHandler;
-import controller.SettingsHandler;
-import controller.StatisticsHandler;
+import controller.PlaygroundController;
+import controller.SettingsController;
+import controller.StatisticsViewController;
 import view.MainFrame;
-import view.Playground;
+import view.PlaygroundView;
 import view.SettingsView;
-import view.Statistics;
+import view.StatisticsView;
 
 /**
  * the Main class is responsible for initializing the application
@@ -22,13 +24,19 @@ public class Main {
 	 * @param args default, should be empty.
 	 */
 	public static void main(String[] args) {
-		Playground p = new Playground();
-		SettingsView s = new SettingsView();
-		Statistics st = new Statistics();
-		SettingsHandler settingsHandler = new SettingsHandler(s);
-		StatisticsHandler statisticsHandler = new StatisticsHandler(st);
-		new GameHandler(p, settingsHandler, statisticsHandler);
-		MainFrame m = new MainFrame(p, s, st);
-		m.setVisible(true);
+
+		SettingsView set = new SettingsView();
+		SettingsController setC = new SettingsController(set);
+		
+		StatisticsView stat = new StatisticsView();
+		StatisticsViewController statC = new StatisticsViewController(stat);	
+		
+		PlaygroundView p = new PlaygroundView();
+		PlaygroundController pc = new PlaygroundController(p, setC, statC);
+
+		//new GameHandler(p, settingsHandler, statisticsHandler);
+		
+		MainFrame m = new MainFrame(p, set, stat);
+		m.setVisible(true);		
 	}
 }

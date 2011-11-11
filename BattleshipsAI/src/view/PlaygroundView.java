@@ -22,7 +22,7 @@ import model.Field;
  *
  */
 @SuppressWarnings("serial")
-public class Playground extends JPanel implements Observer {
+public class PlaygroundView extends JPanel implements Observer {
 	
 	/** the buttons that represent the field. */
 	private JButton[][] fieldButtons;
@@ -35,6 +35,9 @@ public class Playground extends JPanel implements Observer {
 	
 	/** the run through button. */
 	private JButton runThrough;
+	
+	/** the start automatic mode button. */
+	private JButton startAutomaticMode;
 	
 	/** the panel that contains the field. */
 	private JPanel field;
@@ -63,7 +66,7 @@ public class Playground extends JPanel implements Observer {
 	/**
 	 * constructor.
 	 */
-	public Playground() {
+	public PlaygroundView() {
 		super();
 		this.fieldButtons = new JButton[10][10];
 		this.field = new JPanel();
@@ -82,7 +85,7 @@ public class Playground extends JPanel implements Observer {
 		this.setMaximumSize(new Dimension(400, 400));
 		this.fieldContainer.setLayout(new BorderLayout());
 		this.setLayout(new FlowLayout());
-		this.buttons.setLayout(new GridLayout(3, 1));
+		this.buttons.setLayout(new GridLayout(4, 1));
 		GridLayout grid = new GridLayout(10, 10);
 		this.field.setLayout(grid);
 		
@@ -101,12 +104,14 @@ public class Playground extends JPanel implements Observer {
 		this.placeShips = new JButton("Place ships");
 		this.nextMove = new JButton("Next Move");
 		this.runThrough = new JButton("Run through");
+		this.startAutomaticMode = new JButton("Start Automatic Mode");
 		this.placeShips.setEnabled(false);
 		this.nextMove.setEnabled(false);
 		this.runThrough.setEnabled(false);
 		this.buttons.add(this.placeShips);
 		this.buttons.add(this.nextMove);
 		this.buttons.add(this.runThrough);
+		this.buttons.add(this.startAutomaticMode);
 		this.add(field);
 		this.add(buttons);
 	}
@@ -117,15 +122,15 @@ public class Playground extends JPanel implements Observer {
 			for(int j = 0; j < 10; j++) {
 				int value = ((Field)arg0).getFields()[i][j];
 				switch(value) {
-				case 0: this.fieldButtons[i][j].setIcon(this.blueWater);
+				case Field.UNKONWN_EMPTY: this.fieldButtons[i][j].setIcon(this.blueWater);
 				break;
-				case 1: this.fieldButtons[i][j].setIcon(this.greyWater);
+				case Field.UNKNOWN_SHIP: this.fieldButtons[i][j].setIcon(this.greyWater);
 				break;
-				case 2: this.fieldButtons[i][j].setIcon(this.redWater);
+				case Field.EMPTY: this.fieldButtons[i][j].setIcon(this.redWater);
 				break;
-				case 3: this.fieldButtons[i][j].setIcon(this.orangeWater);
+				case Field.HIT: this.fieldButtons[i][j].setIcon(this.orangeWater);
 				break;
-				case 4: this.fieldButtons[i][j].setIcon(this.greenWater);
+				case Field.SUNK: this.fieldButtons[i][j].setIcon(this.greenWater);
 				}
 			}
 		}	
@@ -167,6 +172,15 @@ public class Playground extends JPanel implements Observer {
 	 */
 	public void addRunThroughButtonListener(ActionListener l) {
 		this.runThrough.addActionListener(l);
+	}
+	
+	/**
+	 * adds listener to the start automatic mode button.
+	 * 
+	 * @param l the listener.
+	 */
+	public void addStartAutomaticModeButtonListener(ActionListener l) {
+		this.startAutomaticMode.addActionListener(l);
 	}
 	
 	/**

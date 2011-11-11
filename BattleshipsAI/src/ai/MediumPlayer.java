@@ -3,8 +3,8 @@ package ai;
 import java.util.HashMap;
 import java.util.Observable;
 
-import controller.AttackResult;
 
+import model.AttackResult;
 import model.Coordinate;
 
 /**
@@ -23,6 +23,8 @@ import model.Coordinate;
  */
 public class MediumPlayer extends AbstractPlayer {
 
+	public static final String pName = "Medium Player 1";
+	
 	/** stores the coordinate of the last attack. */
 	private Coordinate lastAttack;
 	
@@ -45,7 +47,7 @@ public class MediumPlayer extends AbstractPlayer {
 	 * @param shipNumbers the number of ships of different lengths.
 	 */
 	public MediumPlayer(HashMap<Integer, Integer> shipNumbers) {
-		super(shipNumbers);
+		super(shipNumbers, "Medium Player");
 	}
 
 	@Override

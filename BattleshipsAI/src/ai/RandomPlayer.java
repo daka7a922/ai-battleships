@@ -3,8 +3,8 @@ package ai;
 import java.util.HashMap;
 import java.util.Observable;
 
-import controller.AttackResult;
 
+import model.AttackResult;
 import model.Coordinate;
 
 /**
@@ -16,13 +16,14 @@ import model.Coordinate;
  */
 public class RandomPlayer extends AbstractPlayer {
 	
+	public static final String pName = "Random Player 1";
 	/**
 	 * constructor. 
 	 * 
 	 * @param shipNumbers the number of ships.
 	 */
 	public RandomPlayer(HashMap<Integer, Integer> shipNumbers) {
-		super(shipNumbers);
+		super(shipNumbers, "Random Player");
 	}
 	
 	@Override
@@ -56,6 +57,4 @@ public class RandomPlayer extends AbstractPlayer {
 			//System.out.println("Daneben");
 		}
 	}
-	
-
 }
