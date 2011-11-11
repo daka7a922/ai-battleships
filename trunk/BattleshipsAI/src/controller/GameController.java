@@ -43,7 +43,7 @@ public class GameController {
 	/** the shots made in the current game. */
 	private int shots;
 	
-	long startTime;
+	private long time;
 	
 	/**
 	 * constructor. 
@@ -90,7 +90,8 @@ public class GameController {
 	 */
 	public Boolean placeShips() throws NullPointerException {
 		//false if less than two ships
-		if (getShipCount() <= 1) return false;
+		if (getShipCount() <= 1) return false;		
+		this.time = 0;
 		int threshold = 1000;
 		ships = new ArrayList<Ship>();
 		field.reset();
@@ -283,12 +284,13 @@ public class GameController {
 	 * @return true if all ships are sunk after the move, false otherwise.
 	 */
 	public boolean nextMove() throws NullPointerException {
-		if (this.startTime==0) this.startTime = System.currentTimeMillis();
 		//Increase shot count
 		this.shots++;
 		
 		//Get coordinate for next move from player and attack it
+		long startTimeNextMove = System.currentTimeMillis();
 		this.attack(this.player.nextMove());
+		this.time = this.time + System.currentTimeMillis() - startTimeNextMove;
 		
 		//Check if there is any ship left (not sunk)
 		for(Ship s : this.ships) {
@@ -300,7 +302,7 @@ public class GameController {
 		//Add statistic results to statistic set
 		this.statisticsController.addStatistic(this.player.getClass(), this.player.getPlayerName(), this.shipNumbers,
 				this.shots, (this.shots - this.getShipFieldNumber()),
-				System.currentTimeMillis()-this.startTime);
+				this.time);
 		return true;
 	}
 	

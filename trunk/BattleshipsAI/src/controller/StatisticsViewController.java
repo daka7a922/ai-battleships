@@ -37,6 +37,9 @@ public class StatisticsViewController extends AbstractStatisticsController {
 		List<Double> maxRelative = new ArrayList<Double>();
 		List<Double> minRelative = new ArrayList<Double>();
 		List<Double> avgRelative = new ArrayList<Double>();
+		List<Long> maxTime = new ArrayList<Long>();
+		List<Long> minTime = new ArrayList<Long>();
+		List<Long> avgTime = new ArrayList<Long>();
 		
 		for(StatisticSetKey sk : this.statistics.keySet()) {
 			StatisticSet s = this.statistics.get(sk);
@@ -51,11 +54,16 @@ public class StatisticsViewController extends AbstractStatisticsController {
 			maxRelative.add(s.getMaxRelativeFaults());
 			minRelative.add(s.getMinRelativeFaults());
 			avgRelative.add(s.getAverageRelativeFaults());
-			this.statisticsView.setAllShotsPanel(playerNameList, allShotsMax, allShotsMin, allShotsAvg);
-			this.statisticsView.setAbsoluteFaultsPanel(playerNameList, maxAbsolute, minAbsolute, avgAbsolute);
-			this.statisticsView.setRelativeFaultsPanel(playerNameList, maxRelative, minRelative, avgRelative);
-			this.statisticsView.setLabelsPanel(playerNameList, shipNumbersList);
+			maxTime.add(s.getMaxTime());
+			minTime.add(s.getMinTime());
+			avgTime.add(s.getAverageTime());
 		}
+		
+		this.statisticsView.setAllShotsPanel(playerNameList, allShotsMax, allShotsMin, allShotsAvg);
+		this.statisticsView.setAbsoluteFaultsPanel(playerNameList, maxAbsolute, minAbsolute, avgAbsolute);
+		this.statisticsView.setRelativeFaultsPanel(playerNameList, maxRelative, minRelative, avgRelative);
+		this.statisticsView.setTimePanel(playerNameList, maxTime, minTime, avgTime);
+		this.statisticsView.setLabelsPanel(playerNameList, shipNumbersList);
 		
 	}
 }

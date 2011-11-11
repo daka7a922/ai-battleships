@@ -5,7 +5,10 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Observable;
 
+import ai.AIAdvancedStatisticsPlayer;
+import ai.AIBrutForcePlayer;
 import ai.AIPlayer;
+import ai.AIStatisticsPlayer;
 import ai.MediumPlayer;
 import ai.RandomPlayer;
 
@@ -59,6 +62,15 @@ public class SettingsController extends Observable {
 					break;
 				case 2: 
 					settings.setPlayer(new AIPlayer(settings.getShipNumbers())); 
+					break;		
+				case 3: 
+					settings.setPlayer(new AIStatisticsPlayer(settings.getShipNumbers())); 
+					break;		
+				case 4: 
+					settings.setPlayer(new AIAdvancedStatisticsPlayer(settings.getShipNumbers())); 
+					break;		
+				case 5: 
+					settings.setPlayer(new AIBrutForcePlayer(settings.getShipNumbers())); 
 					break;				
 				}
 				setChanged();
