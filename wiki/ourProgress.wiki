@@ -1,3 +1,9 @@
+== 17.11.2011 ==
+
+The last two weeks we spent for upgrading our performance measurement tool. This now enables multiple runs in a row, what makes evaluation much easier. We also implemented two player types using statistic methods and heuristics. Also started to write the final paper.
+
+In the last two weeks, we will mainly do some experiments with our different players so that we can evaluate them and come to an conclusion which approaches perform good which don't.
+
 == 02.11.2011 ==
 
 The last week we tried to find a way to get a set of all possible models from the knowledge base. For example in form of a query "I have 2 remaining ships with a length of 3. What are all possible combinations to place these two ships w.r.t. the current infomration in the knowledge base?" Unfortunately, wwe didn't a way to realize this until know. We tried different ideas but prolog didn't answer with helpful solutions.
@@ -30,7 +36,7 @@ What we now want to do is to use this approach to compute statistical data. We t
  * A combination of the first two approaches.
  * Do a brut force approach. Create a solution that includes all possible combinations of ships (w.r.t. to the remaining number). This would be the most powerful approach, but the time for computation might be a problem.
 
-Perhaps, we create different solutions and then will compare them amongst each other.
+Perhaps, we create different solutions and then will compare them among each other.
 
 == 26.10.2011 ==
 
