@@ -22,7 +22,6 @@ public class AISimpleStatisticsPlayer extends AIPlayer {
 		}
 		HashMap<String, Integer> fields = new HashMap<String, Integer>();
 		for(String s : list) {
-			System.out.println(s);
 			String[] array = s.split(" ");
 			for(String a : array) {
 				if(!fields.keySet().contains(a)) {
@@ -46,7 +45,6 @@ public class AISimpleStatisticsPlayer extends AIPlayer {
 			fields.remove(field);
 			fieldList.add(field);
 		}
-		System.out.println();
 		result[0] = Integer.parseInt(fieldList.get(0).substring(1, 2));
 		result[1] = Integer.parseInt(fieldList.get(0).substring(2, 3));
 		return result;
