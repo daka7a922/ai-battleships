@@ -42,16 +42,20 @@ public class AIPlayer extends AbstractPlayer {
 			SolveInfo s;
 			List<String> list = this.searchForCandidates();
 			if(list.size() > 0) {
-				//there is a hit but not yet sunk ship.
-				int r = (int)((Math.random()) * list.size());
-				String c = list.get(r);
-				Coordinate co = new Coordinate(Integer.parseInt(c.substring(1, 2)), Integer.parseInt(c.substring(2)));
-				this.lastAttack = co;
-				return co;
+				while(true) {
+					//there is a hit but not yet sunk ship.
+					int r = (int)((Math.random()) * list.size());
+					String c = list.get(r);
+					Coordinate co = new Coordinate(Integer.parseInt(c.substring(1, 2)), Integer.parseInt(c.substring(2)));
+					this.lastAttack = co;
+					if(this.checkCoordinate(co)) {
+						return co;
+					}
+				}
 			}
 			else {
 				//what to do if there isn't a concrete evidence for a ship.
-				List<String> candidates = this.findShipCandidates();
+				HashMap<Integer, List<String>> candidates = this.findShipCandidates();
 				int[] a = this.choseField(candidates);
 				String var = "x" + a[0] + "" + a[1];
 				try {
@@ -66,6 +70,10 @@ public class AIPlayer extends AbstractPlayer {
 				}
 			}
 		}
+	}
+	
+	protected boolean checkCoordinate(Coordinate co) {
+		return true;
 	}
 	
 	protected List<String> searchForCandidates() {
@@ -89,30 +97,30 @@ public class AIPlayer extends AbstractPlayer {
 		return result;
 	}
 	
-	protected int[] choseField(List<String> list) {
+	protected int[] choseField(HashMap<Integer, List<String>> list) {
 		int[] result = new int[2];
 		result[0] = (int)(Math.random() * 10);
 		result[1] = (int)(Math.random() * 10);
 		return result;
 	}
 	
-	protected List<String> findShipCandidates() {
-		List<String> candidates = new ArrayList<String>();
+	protected HashMap<Integer, List<String>> findShipCandidates() {
+		HashMap<Integer, List<String>> candidates = new HashMap<Integer, List<String>>();
 		if(this.shipNumbers.get(5) > 0) {
 			List<String> five = this.findFive();
-			candidates.addAll(five);
+			candidates.put(5, five);
 		}
 		if(this.shipNumbers.get(4) > 0) {
 			List<String> four = this.findFour();
-			candidates.addAll(four);
+			candidates.put(4, four);
 		}
 		if(this.shipNumbers.get(3) > 0) {
 			List<String> three = this.findThree();
-			candidates.addAll(three);
+			candidates.put(3, three);
 		}
 		if(this.shipNumbers.get(2) > 0) {
 			List<String> two = this.findTwo();
-			candidates.addAll(two);
+			candidates.put(2, two);
 		}
 		return candidates;
 	}

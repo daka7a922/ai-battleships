@@ -35,19 +35,19 @@ public class SettingsView extends JPanel {
 	private JLabel two;
 	
 	/** the combobox for the ships of length 5. */
-	private JComboBox<?> fiveC;
+	private JComboBox fiveC;
 	
 	/** the combobox for the ships of length 4. */
-	private JComboBox<?> fourC;
+	private JComboBox fourC;
 	
 	/** the combobox for the ships of length 3. */
-	private JComboBox<?> threeC;
+	private JComboBox threeC;
 	
 	/** the combobox for the ships of length 2. */
-	private JComboBox<?> twoC;
+	private JComboBox twoC;
 	
 	/** the combobox fo thr player type. */
-	private JComboBox<?> playerTypeC;
+	private JComboBox playerTypeC;
 	
 	/** the panel for the ship number selection. */
 	private JPanel shipNumbersP;
@@ -84,10 +84,10 @@ public class SettingsView extends JPanel {
 		this.four = new JLabel("Cruiser (4)");
 		this.three = new JLabel("Ship (3)");
 		this.two = new JLabel("Boat (2)");
-		this.fiveC = new JComboBox<Object>(maxTwo);
-		this.fourC = new JComboBox<Object>(maxTwo);
-		this.threeC = new JComboBox<Object>(maxThree);
-		this.twoC = new JComboBox<Object>(maxThree);
+		this.fiveC = new JComboBox(maxTwo);
+		this.fourC = new JComboBox(maxTwo);
+		this.threeC = new JComboBox(maxThree);
+		this.twoC = new JComboBox(maxThree);
 		shipNumbersSelectP.add(five);
 		shipNumbersSelectP.add(fiveC);
 		shipNumbersSelectP.add(four);
@@ -100,7 +100,7 @@ public class SettingsView extends JPanel {
 		this.shipNumbersP.add(this.numberOfShipsHeader);
 		this.shipNumbersP.add(shipNumbersSelectP);
 		this.playerTypeHeader = new JLabel("Select the player type!");
-		this.playerTypeC = new JComboBox<Object>(playerTypes);
+		this.playerTypeC = new JComboBox(playerTypes);
 		this.playerTypeP = new JPanel(new GridLayout(2, 1));
 		this.playerTypeP.add(this.playerTypeHeader);
 		this.playerTypeP.add(this.playerTypeC);

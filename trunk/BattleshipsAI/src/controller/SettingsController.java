@@ -7,7 +7,7 @@ import java.util.Observable;
 import ai.AIAdvancedStatisticsPlayer;
 import ai.AIBrutForcePlayer;
 import ai.AIPlayer;
-import ai.AIStatisticsPlayer;
+import ai.AISimpleStatisticsPlayer;
 import ai.MediumPlayer;
 import ai.RandomPlayer;
 
@@ -63,7 +63,7 @@ public class SettingsController extends Observable {
 					settings.setPlayerClass(AIPlayer.class); 
 					break;		
 				case 3: 
-					settings.setPlayerClass(AIStatisticsPlayer.class); 
+					settings.setPlayerClass(AISimpleStatisticsPlayer.class); 
 					break;		
 				case 4: 
 					settings.setPlayerClass(AIAdvancedStatisticsPlayer.class); 
