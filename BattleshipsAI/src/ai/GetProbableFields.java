@@ -3,7 +3,6 @@ package ai;
 import alice.tuprolog.NoMoreSolutionException;
 import alice.tuprolog.Prolog;
 import alice.tuprolog.SolveInfo;
-import alice.tuprolog.Term;
 import alice.tuprolog.Theory;
 
 public class GetProbableFields {

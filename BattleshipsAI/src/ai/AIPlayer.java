@@ -1,15 +1,11 @@
 package ai;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import model.AttackResult;
+import model.Field;
 
 import alice.tuprolog.InvalidTheoryException;
 import alice.tuprolog.MalformedGoalException;
@@ -28,10 +24,15 @@ public class AIPlayer extends AbstractPlayer {
 	protected Coordinate lastAttack;
 	protected int shipsFound;
 	
-	final String name = "AI Player 1";
-	
+	@SuppressWarnings("unchecked")
 	public AIPlayer(HashMap<Integer, Integer> shipNumbers) {
-		super(shipNumbers, "AI Player");
+		super((HashMap<Integer, Integer>)shipNumbers.clone(), "AI Player");
+		this.initializeKnowledgeBase();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public AIPlayer(HashMap<Integer, Integer> shipNumbers, String playerName) {
+		super((HashMap<Integer, Integer>)shipNumbers.clone(), playerName);
 		this.initializeKnowledgeBase();
 	}
 
@@ -87,77 +88,12 @@ public class AIPlayer extends AbstractPlayer {
 		}
 		return result;
 	}
-
-	@Override
-	public void update(Observable arg0, Object arg1) {
-		AttackResult ar = (AttackResult)arg1;
-		if(!ar.isHit()) {
-			try {
-				this.p.addTheory(new Theory(new Theory("empty(x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition()) + ")."));
-			} catch (InvalidTheoryException e) {
-				e.printStackTrace();
-			}
-		} else if(ar.isHit() && !ar.isSunk()) {
-			try {
-				this.p.addTheory(new Theory(new Theory("shipPart(x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition()) + ")."));
-				try {
-					SolveInfo inf = this.p.solve("ship(S), edge(x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition() + ", Y), partOf(S, Y).");
-					Term t;
-					try {
-						t = inf.getVarValue("S");
-						String st = "partOf(" + t.toString() + ", x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition() + "). shipPart(x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition() + ").";
-						this.p.addTheory(new Theory(st));
-					} catch (NoSolutionException e) {
-						String s = "ship(s" + this.shipsFound + "). partOf(s" + this.shipsFound++ + ", x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition() + "). shipPart(x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition() + ").";
-						this.p.addTheory(new Theory(s));
-					}	
-				} catch (MalformedGoalException e) {
-					e.printStackTrace();
-				} 
-			} catch (InvalidTheoryException e) {
-				e.printStackTrace();
-			}
-		} else {
-			try {
-				int n = this.shipNumbers.get(ar.getShipLength());
-				this.shipNumbers.put(ar.getShipLength(),  n - 1);
-				this.p.addTheory(new Theory(new Theory("sunk(x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition()) + ")."));
-				try {
-					SolveInfo inf = this.p.solve("ship(S), edge(X, x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition() + "), " + "partOf(S, X).");
-					Term t = inf.getVarValue("S");
-					p.addTheory(new Theory("partOf(" + t.toString() + ", x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition() + "). sunk(" + t.toString() + "). shipPart(x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition() + ")."));
-					this.markFieldsAroundShip(t.toString());
-				} catch (MalformedGoalException e) {
-					e.printStackTrace();
-				} catch (NoSolutionException e) {
-					e.printStackTrace();
-				}
-			} catch (InvalidTheoryException e) {
-				e.printStackTrace();
-			}
-		}
-	}
 	
-	protected void markFieldsAroundShip(String s) {
-		try {
-			SolveInfo inf = this.p.solve("partOf(" + s + ", X), edge(X, Y), not(shipPart(Y)), not(empty(Y)).");
-			while(inf != null && inf.isSuccess()) {
-				Term t = inf.getVarValue("Y");
-				String theory = "empty(" + t.toString() + ").";
-				this.p.addTheory(new Theory(theory));
-				try {
-					inf = this.p.solveNext();
-				} catch (NoMoreSolutionException e) {
-					inf = null;
-				}
-			}
-		} catch (MalformedGoalException e) {
-			e.printStackTrace();
-		} catch (NoSolutionException e) {
-			e.printStackTrace();
-		} catch (InvalidTheoryException e) {
-			e.printStackTrace();
-		}
+	protected int[] choseField(List<String> list) {
+		int[] result = new int[2];
+		result[0] = (int)(Math.random() * 10);
+		result[1] = (int)(Math.random() * 10);
+		return result;
 	}
 	
 	protected List<String> findShipCandidates() {
@@ -280,6 +216,28 @@ public class AIPlayer extends AbstractPlayer {
 		}
 		return two;
 	}
+	
+	protected void markFieldsAroundShip(String s) {
+		try {
+			SolveInfo inf = this.p.solve("partOf(" + s + ", X), edge(X, Y), not(shipPart(Y)), not(empty(Y)).");
+			while(inf != null && inf.isSuccess()) {
+				Term t = inf.getVarValue("Y");
+				String theory = "empty(" + t.toString() + ").";
+				this.p.addTheory(new Theory(theory));
+				try {
+					inf = this.p.solveNext();
+				} catch (NoMoreSolutionException e) {
+					inf = null;
+				}
+			}
+		} catch (MalformedGoalException e) {
+			e.printStackTrace();
+		} catch (NoSolutionException e) {
+			e.printStackTrace();
+		} catch (InvalidTheoryException e) {
+			e.printStackTrace();
+		}
+	}
 
 	protected void initializeKnowledgeBase() {
 		this.p = new Prolog();
@@ -325,11 +283,54 @@ public class AIPlayer extends AbstractPlayer {
 			e.printStackTrace();
 		}	
 	}
-	
-	protected int[] choseField(List<String> list) {
-		int[] result = new int[2];
-		result[0] = (int)(Math.random() * 10);
-		result[1] = (int)(Math.random() * 10);
-		return result;
+
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		AttackResult ar = (AttackResult)arg1;
+		if(ar.getResult() == Field.EMPTY) {
+			try {
+				this.p.addTheory(new Theory(new Theory("empty(x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition()) + ")."));
+			} catch (InvalidTheoryException e) {
+				e.printStackTrace();
+			}
+		} else if(ar.getResult() == Field.HIT) {
+			try {
+				this.p.addTheory(new Theory(new Theory("shipPart(x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition()) + ")."));
+				try {
+					SolveInfo inf = this.p.solve("ship(S), edge(x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition() + ", Y), partOf(S, Y).");
+					Term t;
+					try {
+						t = inf.getVarValue("S");
+						String st = "partOf(" + t.toString() + ", x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition() + "). shipPart(x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition() + ").";
+						this.p.addTheory(new Theory(st));
+					} catch (NoSolutionException e) {
+						String s = "ship(s" + this.shipsFound + "). partOf(s" + this.shipsFound++ + ", x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition() + "). shipPart(x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition() + ").";
+						this.p.addTheory(new Theory(s));
+					}	
+				} catch (MalformedGoalException e) {
+					e.printStackTrace();
+				} 
+			} catch (InvalidTheoryException e) {
+				e.printStackTrace();
+			}
+		} else if(ar.getResult() == Field.SUNK) {
+			try {
+				int n = this.shipNumbers.get(ar.getShipLength());
+				this.shipNumbers.put(ar.getShipLength(),  n - 1);
+				this.p.addTheory(new Theory(new Theory("sunk(x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition()) + ")."));
+				try {
+					SolveInfo inf = this.p.solve("ship(S), edge(X, x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition() + "), " + "partOf(S, X).");
+					Term t = inf.getVarValue("S");
+					p.addTheory(new Theory("partOf(" + t.toString() + ", x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition() + "). sunk(" + t.toString() + "). shipPart(x" + this.lastAttack.getxPosition() + "" + this.lastAttack.getyPosition() + ")."));
+					this.markFieldsAroundShip(t.toString());
+				} catch (MalformedGoalException e) {
+					e.printStackTrace();
+				} catch (NoSolutionException e) {
+					e.printStackTrace();
+				}
+			} catch (InvalidTheoryException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

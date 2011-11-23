@@ -42,4 +42,9 @@ public class Coordinate {
 	public int getyPosition() {
 		return yPosition;
 	}
+	
+	@Override
+	public String toString() {
+		return "(" + this.getxPosition() + ", " + this.getyPosition() + ")";
+	}
 }

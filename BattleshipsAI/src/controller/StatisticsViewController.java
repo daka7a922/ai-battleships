@@ -4,15 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import ai.IPlayer;
-
-import model.Statistic;
+import model.Settings;
 import model.StatisticSet;
-import model.StatisticSetKey;
-
 import view.StatisticsView;
 
 public class StatisticsViewController extends AbstractStatisticsController {
@@ -40,8 +33,9 @@ public class StatisticsViewController extends AbstractStatisticsController {
 		List<Long> maxTime = new ArrayList<Long>();
 		List<Long> minTime = new ArrayList<Long>();
 		List<Long> avgTime = new ArrayList<Long>();
+		List<Integer> countList = new ArrayList<Integer>();
 		
-		for(StatisticSetKey sk : this.statistics.keySet()) {
+		for(Settings sk : this.statistics.keySet()) {
 			StatisticSet s = this.statistics.get(sk);
 			playerNameList.add(s.getPlayerName());
 			shipNumbersList.add(sk.getShipNumbers());
@@ -57,13 +51,20 @@ public class StatisticsViewController extends AbstractStatisticsController {
 			maxTime.add(s.getMaxTime());
 			minTime.add(s.getMinTime());
 			avgTime.add(s.getAverageTime());
+			countList.add(s.getSize());
 		}
 		
 		this.statisticsView.setAllShotsPanel(playerNameList, allShotsMax, allShotsMin, allShotsAvg);
 		this.statisticsView.setAbsoluteFaultsPanel(playerNameList, maxAbsolute, minAbsolute, avgAbsolute);
 		this.statisticsView.setRelativeFaultsPanel(playerNameList, maxRelative, minRelative, avgRelative);
 		this.statisticsView.setTimePanel(playerNameList, maxTime, minTime, avgTime);
-		this.statisticsView.setLabelsPanel(playerNameList, shipNumbersList);
+		this.statisticsView.setLabelsPanel(playerNameList, shipNumbersList, countList);
+		
+	}
+
+	@Override
+	public void end() {
+		// TODO Auto-generated method stub
 		
 	}
 }

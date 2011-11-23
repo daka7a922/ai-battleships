@@ -1,6 +1,5 @@
 package ai;
 
-import java.util.HashMap;
 import java.util.Observer;
 
 import model.Coordinate;
@@ -24,6 +23,4 @@ public interface IPlayer extends Observer {
 	Coordinate nextMove();
 	
 	String getPlayerName();
-	
-	void reset();
 }

@@ -1,35 +1,25 @@
 package controller;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
-import java.util.Observer;
-
-import javax.swing.JOptionPane;
-
 import model.AttackResult;
 import model.Coordinate;
 import model.Field;
 import model.Settings;
 import model.Ship;
 import model.StatisticSet;
-import view.PlaygroundView;
-import view.StatisticsView;
-import ai.AIPlayer;
 import ai.IPlayer;
-import ai.MediumPlayer;
-import ai.RandomPlayer;
 
-public class GameController {
+public class GameController extends Observable {
 	
 	/** the player that plays the game. */
 	private IPlayer player;
-	
-	/** the number of ships of different lengths. */
-	private HashMap<Integer, Integer> shipNumbers;
+
+	/** the settings of the game (player class and ship numbers). */
+	private Settings settings;
 	
 	/** a list of the ships. (model) */
 	private List<Ship> ships;
@@ -43,7 +33,8 @@ public class GameController {
 	/** the shots made in the current game. */
 	private int shots;
 	
-	private long time;
+	private int time;
+	
 	
 	/**
 	 * constructor. 
@@ -89,16 +80,39 @@ public class GameController {
 	 * ships never can be placed due to inefficient space allocations.)
 	 */
 	public Boolean placeShips() throws NullPointerException {
+		//Instantiate Player
+		try {
+			this.setPlayer(this.settings.getPlayerClass().getConstructor(new Class[]{HashMap.class})
+					.newInstance(new Object[]{this.settings.getShipNumbers()}));
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//false if less than two ships
-		if (getShipCount() <= 1) return false;		
+		if (this.settings.getShipCount() <= 1) return false;		
 		this.time = 0;
 		int threshold = 1000;
 		ships = new ArrayList<Ship>();
 		field.reset();
 		//iterate over the different ship lenghts
-		for(int a : this.shipNumbers.keySet()) {
+		for(int a : this.settings.getShipNumbers().keySet()) {
 			//iterate corresponding to the amount of ships for each length 
-			for(int i = 0; i < this.shipNumbers.get(a); i++) {
+			for(int i = 0; i < this.settings.getShipNumbers().get(a); i++) {
 				while(threshold > 0) {
 					threshold--; //decrease loop counter to prevent infinity loop
 					//choose random field & direction
@@ -119,8 +133,6 @@ public class GameController {
 			this.placeShips();
 		}
 		this.shots = 0;
-		//Reset Player (internal field storage)
-		this.player.reset();
 		return true;
 	}
 	
@@ -264,7 +276,7 @@ public class GameController {
 		List<Coordinate> list = new ArrayList<Coordinate>();
 		for(int i = 0; i < length; i++) {
 			list.add(new Coordinate(x + (i * xSign), y + (i * ySign)));
-			this.field.setField(x + (i * xSign), y + (i*ySign), Field.UNKNOWN_SHIP);
+			this.field.setValue(x + (i * xSign), y + (i*ySign), Field.UNKNOWN_SHIP);
 		}
 		this.ships.add(new Ship(list));
 	}
@@ -290,7 +302,8 @@ public class GameController {
 		//Get coordinate for next move from player and attack it
 		long startTimeNextMove = System.currentTimeMillis();
 		this.attack(this.player.nextMove());
-		this.time = this.time + System.currentTimeMillis() - startTimeNextMove;
+		long endTimeNextMove = System.currentTimeMillis();
+		this.time += endTimeNextMove - startTimeNextMove;
 		
 		//Check if there is any ship left (not sunk)
 		for(Ship s : this.ships) {
@@ -300,8 +313,8 @@ public class GameController {
 		}
 		
 		//Add statistic results to statistic set
-		this.statisticsController.addStatistic(this.player.getClass(), this.player.getPlayerName(), this.shipNumbers,
-				this.shots, (this.shots - this.getShipFieldNumber()),
+		this.statisticsController.addStatistic(this.settings.getPlayerClass(), this.player.getPlayerName(), this.settings.getShipNumbers(),
+				this.shots, (this.shots - this.settings.getShipFieldNumber()),
 				this.time);
 		return true;
 	}
@@ -312,37 +325,36 @@ public class GameController {
 	 * of AttackResult to the observer (the player).
 	 * @param c
 	 */
-	private AttackResult attack(Coordinate c) {
-		boolean hit = false;
-		boolean sunk = false;
+	private void attack(Coordinate c) {
+		int result = Field.EMPTY;
+		
 		int shipLength = 0;
 
 		//Check if field was not yet hit
-		if(this.field.getValue(c.getxPosition(),c.getyPosition())==Field.UNKONWN_EMPTY ||
+		if(this.field.getValue(c.getxPosition(),c.getyPosition())==Field.UNKNOWN ||
 				this.field.getValue(c.getxPosition(),c.getyPosition())==Field.UNKNOWN_SHIP) {
 			//Iterate over ships
 			for(Ship s : this.ships) {
 				//Check if ship is hit
 				if(s.hit(c)) {
-					hit = true;
-					this.field.setField(c.getxPosition(), c.getyPosition(), Field.HIT);
+					result = Field.HIT;
 					if(s.sunk()) {
-						sunk = true;
+						result = Field.SUNK;
 						shipLength = s.getShip().size();
 						for(Coordinate cc : s.getShip().keySet()) {
-							this.field.setField(cc.getxPosition(), cc.getyPosition(), Field.SUNK);
+							this.field.setValue(cc, Field.SUNK);
 						}
 					}
 				}
 			}
-			if(!hit) {
-				this.field.setField(c.getxPosition(), c.getyPosition(), Field.EMPTY);
-			}
-			return new AttackResult(hit, sunk, shipLength);
+			this.field.setValue(c, result);
+            this.setChanged();
+            this.notifyObservers(new AttackResult(result, shipLength));
+            this.clearChanged();
 		}
-		else {
+		/*else {
 			return null;
-		}
+		}*/
 	}
 	
 	public void reset() {
@@ -350,36 +362,12 @@ public class GameController {
 		if (!(this.ships==null)) this.ships.clear();
 	}
 	
-	/** Generates number of fields occupied by ships */
-	private int getShipFieldNumber() {
-		int result = 0;
-		for(int i : this.shipNumbers.keySet()) {
-			result = result + (i * this.shipNumbers.get(i));
-		}
-		return result;
-	}
-
-	/** Generates number ships */
-	private int getShipCount() {
-		int result = 0;
-		for(int i : this.shipNumbers.keySet()) {
-			result = result + this.shipNumbers.get(i);
-		}
-		return result;
-	}
-	
 	// #### getter for object variables ####
-
-	public void setShipNumbers(HashMap<Integer, Integer> shipNumbers) {
-		this.shipNumbers = shipNumbers;
-	}	
-	
-	public HashMap<Integer, Integer> getShipNumbers() {
-		return this.shipNumbers;
-	}
 	
 	public void setPlayer(IPlayer player) {
 		this.player = player;
+		this.deleteObservers();
+		this.addObserver(this.player);
 	}
 	
 	public IPlayer getPlayer() {
@@ -395,7 +383,10 @@ public class GameController {
 	}
 	
 	public void setSettings(Settings settings) {
-		setPlayer(settings.getPlayer());
-		setShipNumbers(settings.getShipNumbers());
+		this.settings = settings;
+	}
+	
+	public Settings getSettings() {
+		return this.settings;
 	}
 }

@@ -36,6 +36,9 @@ public class PlaygroundView extends JPanel implements Observer {
 	/** the run through button. */
 	private JButton runThrough;
 	
+	/** the run play 10 games button. */
+	private JButton play10Games;
+	
 	/** the start automatic mode button. */
 	private JButton startAutomaticMode;
 	
@@ -85,7 +88,7 @@ public class PlaygroundView extends JPanel implements Observer {
 		this.setMaximumSize(new Dimension(400, 400));
 		this.fieldContainer.setLayout(new BorderLayout());
 		this.setLayout(new FlowLayout());
-		this.buttons.setLayout(new GridLayout(4, 1));
+		this.buttons.setLayout(new GridLayout(5, 1));
 		GridLayout grid = new GridLayout(10, 10);
 		this.field.setLayout(grid);
 		
@@ -104,13 +107,16 @@ public class PlaygroundView extends JPanel implements Observer {
 		this.placeShips = new JButton("Place ships");
 		this.nextMove = new JButton("Next Move");
 		this.runThrough = new JButton("Run through");
+		this.play10Games = new JButton("Play 10 Games");
 		this.startAutomaticMode = new JButton("Start Automatic Mode");
 		this.placeShips.setEnabled(false);
 		this.nextMove.setEnabled(false);
 		this.runThrough.setEnabled(false);
+		this.play10Games.setEnabled(false);
 		this.buttons.add(this.placeShips);
 		this.buttons.add(this.nextMove);
 		this.buttons.add(this.runThrough);
+		this.buttons.add(this.play10Games);
 		this.buttons.add(this.startAutomaticMode);
 		this.add(field);
 		this.add(buttons);
@@ -118,11 +124,12 @@ public class PlaygroundView extends JPanel implements Observer {
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
+		Field field = (Field)arg0;
 		for(int i = 0; i < 10; i++) {
 			for(int j = 0; j < 10; j++) {
-				int value = ((Field)arg0).getFields()[i][j];
+				int value = (field).getAsArray()[i][j];
 				switch(value) {
-				case Field.UNKONWN_EMPTY: this.fieldButtons[i][j].setIcon(this.blueWater);
+				case Field.UNKNOWN: this.fieldButtons[i][j].setIcon(this.blueWater);
 				break;
 				case Field.UNKNOWN_SHIP: this.fieldButtons[i][j].setIcon(this.greyWater);
 				break;
@@ -175,6 +182,15 @@ public class PlaygroundView extends JPanel implements Observer {
 	}
 	
 	/**
+	 * adds listener to the play 10 games button.
+	 * 
+	 * @param l the listener.
+	 */
+	public void addPlay10GamesButtonListener(ActionListener l) {
+		this.play10Games.addActionListener(l);
+	}
+	
+	/**
 	 * adds listener to the start automatic mode button.
 	 * 
 	 * @param l the listener.
@@ -208,5 +224,14 @@ public class PlaygroundView extends JPanel implements Observer {
 	 */
 	public void setRunThroughButtonEnabled(boolean enabled) {
 		this.runThrough.setEnabled(enabled);
+	}
+	
+	/**
+	 * set enabled for the run through button.
+	 * 
+	 * @param enabled enabled value.
+	 */
+	public void setPlay10GamesButtonEnabled(boolean enabled) {
+		this.play10Games.setEnabled(enabled);
 	}
 }

@@ -2,16 +2,12 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JOptionPane;
 
-import model.Field;
 import model.Settings;
-import model.Ship;
-
 import view.PlaygroundView;
 
 public class PlaygroundController implements Observer {
@@ -32,8 +28,8 @@ public class PlaygroundController implements Observer {
 		this.gc = new GameController(statisticsController);
 		this.gc.getField().addObserver(this.playground); 
 		this.settingsController = settingsController;
-		this.statisticsController = statisticsController;
 		this.settingsController.addObserver(this); 
+		this.statisticsController = statisticsController;
 		this.addActionListener();
 	}
 	/**
@@ -44,6 +40,7 @@ public class PlaygroundController implements Observer {
 		this.addPlaceShipsButtonListener();
 		this.addNextMoveButtonListener();
 		this.addRunThroughButtonListener();
+		this.addPlay10GamesButtonListener();
 		this.addStartAutomaticModeButtonListener();
 	}
 
@@ -77,9 +74,11 @@ public class PlaygroundController implements Observer {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				playground.setNextMoveButtonEnabled(true);
-				playground.setRunThroughButtonEnabled(true);
+				displayReady(false);
+				displayInProcess(false);
 				gc.placeShips();
+				displayReady(true);
+				displayInProcess(true);
 				statisticsController.output();
 			}
 		});
@@ -93,11 +92,15 @@ public class PlaygroundController implements Observer {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				displayReady(false);
+				displayInProcess(false);
 				if(gc.nextMove()) {
-					playground.setNextMoveButtonEnabled(false);
-					playground.setRunThroughButtonEnabled(false);
+					displayInProcess(false);
 					statisticsController.output();
+				} else { 
+					displayInProcess(true); 
 				}
+				displayReady(true);
 			}
 		});
 	}
@@ -110,9 +113,29 @@ public class PlaygroundController implements Observer {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				playground.setNextMoveButtonEnabled(false);
-				playground.setRunThroughButtonEnabled(false);
+				displayReady(false);
+				displayInProcess(false);
 				gc.runThrough();
+				displayReady(true);
+				displayInProcess(false);
+				statisticsController.output();
+			}
+		});
+	}
+	
+	/**
+	 * add the listener to the play 10 games button.
+	 */
+	private void addPlay10GamesButtonListener() {
+		this.playground.addPlay10GamesButtonListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				displayReady(false);
+				displayInProcess(false);
+				gc.playGames(20);
+				displayReady(true);
+				displayInProcess(false);
 				statisticsController.output();
 			}
 		});
@@ -143,13 +166,21 @@ public class PlaygroundController implements Observer {
 	public void update(Observable o, Object arg) {
 		if(o.getClass().equals(SettingsController.class)) {
 			this.gc.reset();
-			if(((SettingsController)o).getShipCount()>1) {
-				this.playground.setPlaceShipsButtonEnabled(true);
-			} else {
-				this.playground.setPlaceShipsButtonEnabled(false);
+			displayReady(((Settings)arg).getShipCount()>1);
+			displayInProcess(false);
+			if (((Settings)arg).getShipCount()>1) {
+				this.gc.setSettings((Settings)arg);			
 			}
-			this.gc.setSettings(((SettingsController)o).getSettings());		
 		}
 	}
 	
+	private void displayReady(Boolean ready) {
+		playground.setPlaceShipsButtonEnabled(ready);
+		playground.setPlay10GamesButtonEnabled(ready);
+	}
+	
+	private void displayInProcess(Boolean inProcess) {
+		playground.setNextMoveButtonEnabled(inProcess);
+		playground.setRunThroughButtonEnabled(inProcess);
+	}
 }
