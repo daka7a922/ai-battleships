@@ -10,6 +10,8 @@ import alice.tuprolog.NoSolutionException;
 import alice.tuprolog.SolveInfo;
 
 public class AIBrutForcePlayer extends AIPlayer {
+	
+	private static final int timeout = 10000;
 
 	public AIBrutForcePlayer(HashMap<Integer, Integer> shipNumbers) {
 		super(shipNumbers, "Brut Force Player");
@@ -86,7 +88,8 @@ public class AIBrutForcePlayer extends AIPlayer {
 			}
 			query += ".";
 			SolveInfo inf = this.p.solve(query);
-			int countdown = 1000;
+			
+			int countdown = timeout;
 			while(inf != null && inf.isSuccess() && countdown > 0) { 
 				countdown--;
 				String candidateDesc = "";
