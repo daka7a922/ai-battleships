@@ -10,6 +10,7 @@ import controller.StatisticsOutputController;
 
 import model.Settings;
 
+import ai.AIAdvancedStatisticsPlayer;
 import ai.AIBrutForcePlayer;
 import ai.AIPlayer;
 import ai.AIStatisticsPlayer;
@@ -17,7 +18,7 @@ import ai.IPlayer;
 import ai.MediumPlayer;
 import ai.RandomPlayer;
 
-public class EvaluationController {
+public class MainEvaluationController {
 	
 	private static final int runs = 10;
 	/**
@@ -54,6 +55,7 @@ public class EvaluationController {
 		playersList.add(MediumPlayer.class);
 		playersList.add(AIPlayer.class);
 		playersList.add(AIStatisticsPlayer.class);
+		playersList.add(AIAdvancedStatisticsPlayer.class);
 		playersList.add(AIBrutForcePlayer.class);
 		
 		
@@ -71,7 +73,7 @@ public class EvaluationController {
 				gameController.setSettings(new Settings(playerClass, map));
 
 				//Play
-				for (int i = 0; i < EvaluationController.runs; i++) {
+				for (int i = 0; i < MainEvaluationController.runs; i++) {
 					gameController.playGame();
 				}
 			}

@@ -13,7 +13,7 @@ import view.StatisticsView;
  * @author Jakob
  *
  */
-public class Main {
+public class MainDisplayController {
 
 	/**
 	 * the initial method, creating the MainFrame and
