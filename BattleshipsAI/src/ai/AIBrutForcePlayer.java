@@ -18,9 +18,13 @@ public class AIBrutForcePlayer extends AIPlayer {
 	}
 	
 	@Override
-	protected int[] choseField(List<String> list) {
+	protected int[] choseField(HashMap<Integer, List<String>> l) {
 		int[] result = new int[2];
 		HashMap<String, Integer> fields = new HashMap<String, Integer>();
+		List<String> list = new ArrayList<String>();
+		for(List<String> ls : l.values()) {
+			list.addAll(ls);
+		}
 		for(String s : list) {
 			//System.out.println(s);
 			String[] array = s.split(" ");
@@ -51,7 +55,7 @@ public class AIBrutForcePlayer extends AIPlayer {
 	}
 	
 	@Override
-	protected List<String> findShipCandidates() {
+	protected HashMap<Integer, List<String>> findShipCandidates() {
 		String query = "";
 		List<String> variableList = new ArrayList<String>();
 		List<String> candidates = new ArrayList<String>();
@@ -108,7 +112,9 @@ public class AIBrutForcePlayer extends AIPlayer {
 		} catch (MalformedGoalException e) {
 			e.printStackTrace();
 		}
-		return candidates;
+		HashMap<Integer, List<String>> result = new HashMap<Integer, List<String>>();
+		result.put(1, candidates);
+		return result;
 	}
 
 }
