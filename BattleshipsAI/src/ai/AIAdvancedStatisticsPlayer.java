@@ -24,9 +24,6 @@ public class AIAdvancedStatisticsPlayer extends AIPlayer {
 			double p = 0;
 			if(l != null) {
 				p = (((this.shipNumbers.get(i)) / (double)l.size()) * 100);
-				System.out.println(this.shipNumbers.get(i));
-				System.out.println(l.size());
-				System.out.println(i);
 			}
 			if(p >= probability && l != null) {
 				System.out.println(i + ": " + p);
@@ -73,7 +70,6 @@ public class AIAdvancedStatisticsPlayer extends AIPlayer {
 			fieldList.add(field);
 		}
 		int[] result = new int[2];
-		System.out.println();
 		result[0] = Integer.parseInt(fieldList.get(0).substring(1, 2));
 		result[1] = Integer.parseInt(fieldList.get(0).substring(2, 3));
 		return result;
