@@ -13,7 +13,7 @@ import model.Settings;
 import ai.AIAdvancedStatisticsPlayer;
 import ai.AIBrutForcePlayer;
 import ai.AIPlayer;
-import ai.AIStatisticsPlayer;
+import ai.AISimpleStatisticsPlayer;
 import ai.IPlayer;
 import ai.MediumPlayer;
 import ai.RandomPlayer;
@@ -54,7 +54,7 @@ public class MainEvaluationController {
 		playersList.add(RandomPlayer.class);
 		playersList.add(MediumPlayer.class);
 		playersList.add(AIPlayer.class);
-		playersList.add(AIStatisticsPlayer.class);
+		playersList.add(AISimpleStatisticsPlayer.class);
 		playersList.add(AIAdvancedStatisticsPlayer.class);
 		playersList.add(AIBrutForcePlayer.class);
 		
