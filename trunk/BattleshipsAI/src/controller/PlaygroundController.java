@@ -133,7 +133,7 @@ public class PlaygroundController implements Observer {
 			public void actionPerformed(ActionEvent e) {
 				displayReady(false);
 				displayInProcess(false);
-				gc.playGames(20);
+				gc.playGames(10);
 				displayReady(true);
 				displayInProcess(false);
 				statisticsController.output();
