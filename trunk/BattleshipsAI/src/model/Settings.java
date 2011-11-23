@@ -15,14 +15,22 @@ public class Settings {
 	/** the number of ships of different lengths. */
 	private HashMap<Integer, Integer> shipNumbers;
 	
-	/** the number of the player type (0 = random, 1 = medium, 2 = AI). */
-	private IPlayer player;
+	private Class<? extends IPlayer> playerClass;
 	
 	/**
 	 * constructor.
 	 */
 	public Settings() {
 		this.shipNumbers = new HashMap<Integer, Integer>();
+	}
+
+	/**
+	 * constructor.
+	 */
+	public Settings(Class<? extends IPlayer> playerClass, HashMap<Integer, Integer> shipNumbers) {
+		this.playerClass = playerClass;
+		this.shipNumbers = shipNumbers;
+		
 	}
 	
 	/**
@@ -48,8 +56,8 @@ public class Settings {
 	 * 
 	 * @return number of playertype.
 	 */
-	public IPlayer getPlayer() {
-		return this.player;
+	public Class<? extends IPlayer> getPlayerClass() {
+		return this.playerClass;
 	}
 	
 	/**
@@ -57,7 +65,43 @@ public class Settings {
 	 * 
 	 * @param player the new player type number.
 	 */
-	public void setPlayer(IPlayer player) {
-		this.player = player;
+	public void setPlayerClass(Class<? extends IPlayer> playerClass) {
+		this.playerClass = playerClass;
+	}
+	
+	/** Generates number of fields occupied by ships */
+	public int getShipFieldNumber() {
+		int result = 0;
+		for(int i : this.shipNumbers.keySet()) {
+			result = result + (i * this.shipNumbers.get(i));
+		}
+		return result;
+	}
+
+	/** Generates number ships */
+	public int getShipCount() {
+		int result = 0;
+		for(int i : this.shipNumbers.keySet()) {
+			result = result + this.shipNumbers.get(i);
+		}
+		return result;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (playerClass.equals(((Settings)o).playerClass) && shipNumbers.equals(((Settings)o).shipNumbers)) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+    public int hashCode() {
+        return (playerClass + this.shipNumbers.toString()).hashCode();
+    }
+	
+	@Override
+	public String toString() {
+		return "{Player=" + this.playerClass + ", ShipNumbers="+ this.shipNumbers + "}";
 	}
 }

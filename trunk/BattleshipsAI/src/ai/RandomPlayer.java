@@ -6,6 +6,7 @@ import java.util.Observable;
 
 import model.AttackResult;
 import model.Coordinate;
+import model.Field;
 
 /**
  * Dummy player, that attacks pure randomly. The only intelligent
@@ -15,46 +16,33 @@ import model.Coordinate;
  *
  */
 public class RandomPlayer extends AbstractPlayer {
-	
-	public static final String pName = "Random Player 1";
 	/**
 	 * constructor. 
 	 * 
 	 * @param shipNumbers the number of ships.
 	 */
+	@SuppressWarnings("unchecked")
 	public RandomPlayer(HashMap<Integer, Integer> shipNumbers) {
-		super(shipNumbers, "Random Player");
+		super((HashMap<Integer, Integer>)shipNumbers.clone(), "Random Player");
 	}
 	
 	@Override
 	public Coordinate nextMove() {
-		while(true) {
-			Coordinate c = new Coordinate((int)(Math.random() * 10), (int)(Math.random() * 10));
-			if(this.field[c.getxPosition()][c.getyPosition()] == 0) {
-				this.field[c.getxPosition()][c.getyPosition()] = 1;
-				return c;
-			}
-		}
+		Coordinate c = this.random();
+		this.lastAttack = c;
+		return c;
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
 		AttackResult a = (AttackResult)arg;
-		if(a.isHit()) {
-			if(!a.isSunk()) {
-				//System.out.println("Treffer");
-			} else {
-				int i = this.shipNumbers.get(a.getShipLength());
-				this.shipNumbers.put(a.getShipLength(), i-1);
-				//System.out.println("Treffer versenkt (" + a.getShipLength() + ")");
-				//System.out.print("Verbleibende Schiffe: ");
-				for(int x : this.shipNumbers.keySet()) {
-					//System.out.print(x + "(" + this.shipNumbers.get(x) + ") ");
-				}
-				//System.out.println();
-			}
-		} else {
-			//System.out.println("Daneben");
+		if(a.getResult() == Field.SUNK) {
+			this.shipNumbers.put(a.getShipLength(), this.shipNumbers.get(a.getShipLength())-1);
 		}
+		this.field.setValue(this.lastAttack, a.getResult());
+	}
+	
+	public HashMap<Integer, Integer> getShipNumbers() {
+		return this.shipNumbers;
 	}
 }

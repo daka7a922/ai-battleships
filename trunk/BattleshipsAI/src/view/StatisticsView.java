@@ -1,6 +1,5 @@
 package view;
 
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -20,6 +19,7 @@ public class StatisticsView extends JPanel {
 	private JPanel completeP;
 	private JPanel configurationNameP;
 	private JPanel configurationShipNumbersP;
+	private JPanel configurationCountP;
 	private JPanel allShotsP;
 	private JPanel faultsAbsoluteP;
 	private JPanel faultsRelativeP;
@@ -30,15 +30,17 @@ public class StatisticsView extends JPanel {
 	}
 	
 	private void initialize() {
-		this.completeP = new JPanel(new GridLayout(1, 6));
+		this.completeP = new JPanel(new GridLayout(1, 7));
 		this.allShotsP = new JPanel();
 		this.faultsAbsoluteP = new JPanel();
 		this.faultsRelativeP = new JPanel();
 		this.configurationNameP = new JPanel();
 		this.configurationShipNumbersP = new JPanel();
+		this.configurationCountP = new JPanel();
 		this.timeP = new JPanel();
 		this.completeP.add(this.configurationNameP);
 		this.completeP.add(this.configurationShipNumbersP);
+		this.completeP.add(this.configurationCountP);
 		this.completeP.add(this.allShotsP);
 		this.completeP.add(this.faultsAbsoluteP);
 		this.completeP.add(this.faultsRelativeP);
@@ -46,8 +48,7 @@ public class StatisticsView extends JPanel {
 		this.add(completeP);
 	}
 	
-	public void setLabelsPanel(List<String> names, List<HashMap<Integer, Integer>> shipNumbersList) {
-		DecimalFormat df = new DecimalFormat( "0.00" );
+	public void setLabelsPanel(List<String> names, List<HashMap<Integer, Integer>> shipNumbersList, List<Integer> countList) {
 		JPanel pNames = new JPanel(new GridLayout((names.size() * 3) + 7, 1));
 		pNames.add(new JLabel("Names"));
 		pNames.add(new JLabel());
@@ -86,6 +87,25 @@ public class StatisticsView extends JPanel {
 		}
 		this.configurationShipNumbersP.removeAll();
 		this.configurationShipNumbersP.add(pShipNumbers);
+		JPanel pCount = new JPanel(new GridLayout((names.size() * 3) + 7, 1));
+		pCount.add(new JLabel("Count"));
+		pCount.add(new JLabel());
+		pCount.add(new JLabel());
+		for(int i = 0; i < countList.size(); i++) {
+			pCount.add(new JLabel("" + countList.get(i)));
+		}
+		pCount.add(new JLabel());
+		pCount.add(new JLabel());
+		for(int i = 0; i < names.size(); i++) {
+			pCount.add(new JLabel("" + countList.get(i)));
+		}
+		pCount.add(new JLabel());
+		pCount.add(new JLabel());
+		for(int i = 0; i < names.size(); i++) {
+			pCount.add(new JLabel("" + countList.get(i)));
+		}
+		this.configurationCountP.removeAll();
+		this.configurationCountP.add(pCount);
 	}
 	
 	

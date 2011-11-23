@@ -11,12 +11,12 @@ public class StatisticSet {
 
 	// #### object variables ####
 	 
-	StatisticSetKey key;
+	Settings key;
 	private List<Statistic> statistics;
 	
 	// #### constructor ####
 	
-	public StatisticSet(StatisticSetKey key) {
+	public StatisticSet(Settings key) {
 		this.key = key;
 		this.statistics = new ArrayList<Statistic>();
 	}
@@ -146,12 +146,6 @@ public class StatisticSet {
 	public String getPlayerName() {
 		try {
 			return this.key.getPlayerClass().getConstructor(new Class[]{HashMap.class}).newInstance(new Object[] {new HashMap<Integer, Integer>()}).getPlayerName();
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -162,6 +156,12 @@ public class StatisticSet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

@@ -2,7 +2,6 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
 import java.util.Observable;
 
 import ai.AIAdvancedStatisticsPlayer;
@@ -55,26 +54,26 @@ public class SettingsController extends Observable {
 				settings.getShipNumbers().put(2, settingsView.getTwo());
 				switch(settingsView.getPlayer()) {
 				case 0: 
-					settings.setPlayer(new RandomPlayer(settings.getShipNumbers())); 
+					settings.setPlayerClass(RandomPlayer.class); 
 					break;
 				case 1: 
-					settings.setPlayer(new MediumPlayer(settings.getShipNumbers())); 
+					settings.setPlayerClass(MediumPlayer.class); 
 					break;
 				case 2: 
-					settings.setPlayer(new AIPlayer(settings.getShipNumbers())); 
+					settings.setPlayerClass(AIPlayer.class); 
 					break;		
 				case 3: 
-					settings.setPlayer(new AIStatisticsPlayer(settings.getShipNumbers())); 
+					settings.setPlayerClass(AIStatisticsPlayer.class); 
 					break;		
 				case 4: 
-					settings.setPlayer(new AIAdvancedStatisticsPlayer(settings.getShipNumbers())); 
+					settings.setPlayerClass(AIAdvancedStatisticsPlayer.class); 
 					break;		
 				case 5: 
-					settings.setPlayer(new AIBrutForcePlayer(settings.getShipNumbers())); 
+					settings.setPlayerClass(AIBrutForcePlayer.class); 
 					break;				
 				}
 				setChanged();
-				notifyObservers();
+				notifyObservers(settings);
 				clearChanged();
 			}
 		});
@@ -87,15 +86,6 @@ public class SettingsController extends Observable {
 	 */
 	public Settings getSettings() {
 		return this.settings;
-	}
-	
-	public int getShipCount() {
-		int shipCount = 0;
-		HashMap<Integer, Integer> map = settings.getShipNumbers();
-		for(int x : map.keySet()) {
-			shipCount = shipCount + map.get(x);
-		}
-		return shipCount;
 	}
 	
 }

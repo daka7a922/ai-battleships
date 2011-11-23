@@ -10,14 +10,10 @@ package model;
  */
 public class AttackResult {
 	
-	/** true if the last attack resulted in a hit, false otherwise. */
-	private boolean hit;
-	
-	/** true if the last attack resulted in a sunk ship, false otherwise. */
-	private boolean sunk;
-	
 	/** if a ship was sunk, than this field contains the length of the ship. */
 	private int shipLength;
+	
+	private int result;
 	
 	
 	/**
@@ -27,28 +23,9 @@ public class AttackResult {
 	 * @param sunk the value for the sunk field.
 	 * @param shipLength the value for the shipLength field.
 	 */
-	public AttackResult(boolean hit, boolean sunk, int shipLength) {
-		this.hit = hit;
-		this.sunk = sunk;
+	public AttackResult(int result, int shipLength) {
 		this.shipLength = shipLength;
-	}
-
-	/**
-	 * getter for hit.
-	 * 
-	 * @return the hit.
-	 */
-	public boolean isHit() {
-		return hit;
-	}
-
-	/**
-	 * getter for sunk.
-	 * 
-	 * @return the sunk.
-	 */
-	public boolean isSunk() {
-		return sunk;
+		this.result = result;
 	}
 	
 	/**
@@ -59,4 +36,15 @@ public class AttackResult {
 	public int getShipLength() {
 		return this.shipLength;
 	}
+
+	/**
+	 * getter result.
+	 * 
+	 * @return the result.
+	 */
+	public int getResult() {
+		return this.result;
+	}
+	
+	
 }

@@ -2,6 +2,9 @@ package ai;
 
 import java.util.HashMap;
 
+import model.Coordinate;
+import model.Field;
+
 /**
  * Interface for a concrete player class that includes the two
  * main fields field and shipNumbers that can help to represent
@@ -13,44 +16,47 @@ import java.util.HashMap;
  */
 public abstract class AbstractPlayer implements IPlayer {
 	
-	private String playerName;
+	public final String playerName;
 	
 	/**represents the playground. */
-	protected int[][] field;
+	protected Field field;
 	
 	/** represents the number of ships. */
 	protected HashMap<Integer, Integer> shipNumbers;	
+	
+	/** stores the coordinate of the last attack. */
+	protected Coordinate lastAttack;
 	
 	/**
 	 * the constructor.
 	 * 
 	 * @param shipNumbers the number of ships of different lengths.
 	 */
-	@SuppressWarnings("unchecked")
 	public AbstractPlayer(HashMap<Integer, Integer> shipNumbers, String playerName) {
-		this.field = new int[10][10];
+		this.field = new Field();
 		this.playerName = playerName;
 		this.shipNumbers = shipNumbers;
-		//this.shipNumbers.clear();
+	}
 
-		initializeField();
-	}
-	
-	void initializeField() {
-		for(int i = 0; i < 10; i++) {
-			for(int j = 0; j < 10; j++) {
-				this.field[i][j] = 0;
-			}
-		}
-	}
-	
 	@Override
 	public String getPlayerName() {
 		return this.playerName;
 	}
 	
-	@Override
-	public void reset() {
-		initializeField();
+	//TODO: Document
+	/**
+	 * if there isn't a hit but not sunk ship, the player attacks a random
+	 * field that is computed in this method.
+	 * 
+	 * @return Coordinate is coordinate, int[1] the y coordinate. avoids attacks
+	 * on fields that already have been attacked or can impossibly contain a ship.
+	 */
+	Coordinate random() {
+		while(true) {
+			Coordinate c = new Coordinate((int)(Math.random() * 10), (int)(Math.random() * 10));
+			if(this.field.getValue(c) == Field.UNKNOWN) {
+				return c;
+			}
+		}
 	}
 }

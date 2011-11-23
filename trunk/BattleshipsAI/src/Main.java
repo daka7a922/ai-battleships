@@ -1,4 +1,3 @@
-import controller.GameController;
 import controller.PlaygroundController;
 import controller.SettingsController;
 import controller.StatisticsViewController;
@@ -31,6 +30,7 @@ public class Main {
 		StatisticsViewController statC = new StatisticsViewController(stat);	
 		
 		PlaygroundView p = new PlaygroundView();
+		@SuppressWarnings("unused")
 		PlaygroundController pc = new PlaygroundController(p, setC, statC);
 
 		//new GameHandler(p, settingsHandler, statisticsHandler);

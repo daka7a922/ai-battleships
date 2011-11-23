@@ -1,11 +1,14 @@
 package ai;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Observable;
 
 
 import model.AttackResult;
 import model.Coordinate;
+import model.Field;
 
 /**
  * the medium player is able to focus on a ship once he hits
@@ -22,11 +25,6 @@ import model.Coordinate;
  *
  */
 public class MediumPlayer extends AbstractPlayer {
-
-	public static final String pName = "Medium Player 1";
-	
-	/** stores the coordinate of the last attack. */
-	private Coordinate lastAttack;
 	
 	/** stores the coordinate of the field where the last hit of a ship was performed. */
 	private Coordinate lastHit;
@@ -53,16 +51,12 @@ public class MediumPlayer extends AbstractPlayer {
 	@Override
 	public Coordinate nextMove() {
 		Coordinate c = new Coordinate(0, 0);
+		//No ship found that did not sink yet: Try to find new ship
 		if(!this.foundShip) {
-			boolean found = false;
-			while(!found) {
-				int[] z = this.random();
-				if(this.field[z[0]][z[1]] == 0) {
-					c = new Coordinate(z[0], z[1]);
-					found = true;
-				}
-			}
-		} else {
+			c = this.random();
+		}
+		//Else: Try to find rest of the ship 
+		else {
 			c = this.prepareAttack();
 		}
 		this.lastAttack = c;		
@@ -72,26 +66,22 @@ public class MediumPlayer extends AbstractPlayer {
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		AttackResult a = (AttackResult)arg1;
-		if(a.isHit()) {
-			if(!a.isSunk()) {
-				this.field[this.lastAttack.getxPosition()][this.lastAttack.getyPosition()] = 2;
-				this.foundShip = true;
-				this.lastHit = lastAttack;
-				
-			} else {
-				this.field[this.lastAttack.getxPosition()][this.lastAttack.getyPosition()] = 3;
-				this.markShip();
-				this.foundShip = false;
-				this.horizontal = false;
-				this.vertical = false;
-			}
-		}  else {
-			this.field[lastAttack.getxPosition()][this.lastAttack.getyPosition()] = 1;
+		if(a.getResult() == Field.HIT) {
+			this.foundShip = true;
+			this.lastHit = lastAttack;
+		} else if (a.getResult() == Field.SUNK) {
+			this.markField(this.lastAttack);
+			
+			this.foundShip = false;
+			this.horizontal = false;
+			this.vertical = false;
+			this.lastHit = lastAttack;
 		}
+		this.field.setValue(this.lastAttack, a.getResult());
 	}
 	
 	/**
-	 * is called whenever there is ship that is hit but not sunk. Tries either
+	 * is called whenever there is ship that is hit, but not sunk. Tries 
 	 * to find out the direction the ship is placed and to hit it again.
 	 * @return
 	 */
@@ -104,22 +94,22 @@ public class MediumPlayer extends AbstractPlayer {
 				int a = ((int)(Math.random() * 4));
 				switch(a) {
 				case 0:
-					if(lastHit.getxPosition() + 1 <= 9 && this.field[lastHit.getxPosition() + 1][lastHit.getyPosition()] == 0) {
+					if(lastHit.getxPosition() + 1 <= 9 && this.field.getValue(lastHit.getxPosition() + 1, lastHit.getyPosition()) == Field.UNKNOWN) {
 						return new Coordinate(lastHit.getxPosition() + 1, lastHit.getyPosition());
 					}
 					break;
 				case 1:
-					if(lastHit.getxPosition() - 1 >= 0 && this.field[lastHit.getxPosition() - 1][lastHit.getyPosition()] == 0) {
+					if(lastHit.getxPosition() - 1 >= 0 && this.field.getValue(lastHit.getxPosition() - 1, lastHit.getyPosition()) == Field.UNKNOWN) {
 						return new Coordinate(lastHit.getxPosition() - 1, lastHit.getyPosition());
 					}
 					break;
 				case 2:
-					if(lastHit.getyPosition() + 1 <= 9 && this.field[lastHit.getxPosition()][lastHit.getyPosition() + 1] == 0) {
+					if(lastHit.getyPosition() + 1 <= 9 && this.field.getValue(lastHit.getxPosition(), lastHit.getyPosition() + 1) == Field.UNKNOWN) {
 						return new Coordinate(lastHit.getxPosition(), lastHit.getyPosition() + 1);
 					}
 					break;
 				case 3:
-					if(lastHit.getyPosition() - 1 >= 0 && this.field[lastHit.getxPosition()][lastHit.getyPosition() - 1] == 0) {
+					if(lastHit.getyPosition() - 1 >= 0 && this.field.getValue(lastHit.getxPosition(), lastHit.getyPosition() - 1) == Field.UNKNOWN) {
 						return new Coordinate(lastHit.getxPosition(), lastHit.getyPosition() - 1);
 					}
 					break;
@@ -140,9 +130,9 @@ public class MediumPlayer extends AbstractPlayer {
 			while(true) {
 				boolean xBound = (0 <= (cx + x) && 9 >= (cx + x));
 				boolean yBound = (0 <= (cy + y) && 9 >= (cy +y ));
-				if(xBound && yBound && this.field[cx + x][cy + y] == 0) {
+				if(xBound && yBound && this.field.getValue(cx + x, cy + y) == Field.UNKNOWN) {
 					return new Coordinate(cx + x, cy + y);
-				} else if((!xBound || !yBound) || this.field[cx + x][cy + y] == 1) {
+				} else if((!xBound || !yBound) || this.field.getValue(cx + x, cy + y) == Field.EMPTY) {
 					x = x * (-1);
 					y = y * (-1);
 				} else {
@@ -179,24 +169,10 @@ public class MediumPlayer extends AbstractPlayer {
 		if(x < 0 || x > 9 || y < 0 || y > 9) {
 			return false;
 		} else {
-			if(this.field[x][y] == 2) {
+			if(this.field.getValue(x, y) == Field.HIT) {
 				return true;
 			} else {
 				return false;
-			}
-		}
-	}
-	
-	/**
-	 * mark all neighboured fields of a ship that is sunk so that these
-	 * fields won't be attacked later, because they cannot contain a ship.
-	 */
-	private void markShip() {
-		for(int x = 0; x < 10; x++) {
-			for(int y = 0; y < 10; y++) {
-				if(this.field[x][y] == 3) {
-					this.markField(x, y);
-				}
 			}
 		}
 	}
@@ -209,54 +185,22 @@ public class MediumPlayer extends AbstractPlayer {
 	 * @param x x coordinate of the field.
 	 * @param y y coordinate of the field.
 	 */
-	private void markField(int x, int y) {
-		boolean yMaxBound = (y + 1 <= 9);
-		boolean yMinBound = (y - 1 >= 0);
-		boolean xMaxBound = (x + 1 <= 9);
-		boolean xMinBound = (x - 1 >= 0);
-		this.field[x][y] = 3;
-		if(yMaxBound) {
-			if(this.field[x][y + 1] != 2) {
-				this.field[x][y + 1] = 1;
-			} else {
-				this.markField(x, y + 1);
+	private void markField(Coordinate c) {
+		List<Coordinate> cList = new ArrayList<Coordinate>();
+		if(c.getxPosition() + 1 <= 9) cList.add(new Coordinate(c.getxPosition() + 1, c.getyPosition())); //xMaxBound
+		if(c.getxPosition() - 1 >= 0) cList.add(new Coordinate(c.getxPosition() - 1, c.getyPosition())); //xMinBound
+		if(c.getyPosition() + 1 <= 9) cList.add(new Coordinate(c.getxPosition(), c.getyPosition() + 1)); //yMaxBound
+		if(c.getyPosition() - 1 >= 0) cList.add(new Coordinate(c.getxPosition(), c.getyPosition() - 1)); //yMinBound
+		this.field.setValue(c, Field.SUNK);
+		for (Coordinate cc : cList) {
+			switch (this.field.getValue(cc)) {
+			case Field.UNKNOWN: 
+				this.field.setValue(cc, Field.EMPTY); 
+				break;
+			case Field.HIT: 
+				this.markField(cc);
 			}
 		}
-		if(yMinBound) {
-			if(this.field[x][y - 1] != 2) {
-				this.field[x][y - 1] = 1;
-			} else {
-				this.markField(x, y - 1);
-			}
-		}
-		if(xMaxBound) {
-			if(this.field[x + 1][y] != 2) {
-				this.field[x + 1][y] = 1;
-			} else {
-				this.markField(x + 1, y);
-			}
-		}
-		if(xMinBound) {
-			if(this.field[x - 1][y] != 2) {
-				this.field[x - 1][y] = 1;
-			} else {
-				this.markField(x - 1, y);
-			}
-		}
-	}
-	
-	/**
-	 * if there isn't a hit but not sunk ship, the player attacks a random
-	 * field that is computed in this method.
-	 * 
-	 * @return int[0] is the x coordinate, int[1] the y coordinate. avoids attacks
-	 * on fields that already have been attacked or can impossibly contain a ship.
-	 */
-	private int[] random() {
-		int x = ((int)(Math.random() * 10));
-		int y = ((int)(Math.random() * 10));
-		int[] z = {x, y};
-		return z;
 	}
 	
 	/**
@@ -264,12 +208,6 @@ public class MediumPlayer extends AbstractPlayer {
 	 */
 	@SuppressWarnings("unused")
 	private void print() {
-		for(int i = 0; i < 10; i++) {
-			for(int j = 0; j < 10; j++) {
-				System.out.print(this.field[i][j] + " ");
-			}
-			System.out.println();
-		}
-		System.out.println();
+		System.out.print(this.field);
 	}
 }
