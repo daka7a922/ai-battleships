@@ -26,7 +26,6 @@ public class AIAdvancedStatisticsPlayer extends AIPlayer {
 				p = (((this.shipNumbers.get(i)) / (double)l.size()) * 100);
 			}
 			if(p >= probability && l != null) {
-				System.out.println(i + ": " + p);
 				index = i;
 				probability = p;
 			}
